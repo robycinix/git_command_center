@@ -7,16 +7,6 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-### Added
-
-- Persistent language selection with automatic operating-system detection
-- English, German, Spanish, French, Portuguese and Italian interface catalogs
-- Localized wizard plans, safety prompts, dashboard labels and learning content
-- `--language` command-line override with English fallback for unsupported locales
-- Idempotent `--setup-path` command for Windows, Linux, macOS and WSL
-- One-click sandbox folder opening through the platform's native file manager
-- English README dashboard screenshot generated with an explicit locale
-
 ### Planned
 
 - Side-by-side syntax-aware diff viewer
@@ -35,6 +25,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Critical-operation confirmation policy requiring `CONFERMO`
 - YAML configuration, built-in themes and customizable shortcuts
 - Python packaging, PyInstaller build configuration and automated test suite
+- Persistent language selection with automatic operating-system detection
+- English, German, Spanish, French, Portuguese and Italian interface catalogs
+- Localized wizard plans, safety prompts, dashboard labels and learning content
+- `--language` command-line override with English fallback for unsupported locales
+- Idempotent `--setup-path` command for Windows, Linux, macOS and WSL
+- One-click sandbox folder opening through the platform's native file manager
+- English README dashboard screenshot generated with an explicit locale
+- Automated release assets and GHCR container packaging
 
 [Unreleased]: https://github.com/robycinix/git_command_center/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/robycinix/git_command_center/releases/tag/v0.1.0

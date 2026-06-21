@@ -20,12 +20,14 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "build>=1.2",
   "mypy>=1.14",
   "pyinstaller>=6.11",
   "pytest>=8.3",
   "pytest-cov>=6.0",
   "ruff>=0.9",
   "types-PyYAML>=6.0.12",
+  "twine>=6.0",
 ]
 
 [project.scripts]
@@ -36,7 +38,18 @@ git-command-center = "git_command_center.__main__:main"
 packages = ["src/git_command_center"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/git_command_center", "tests", "docs", "README.md", "LICENSE"]
+include = [
+  "src/git_command_center",
+  "tests",
+  "docs",
+  ".github",
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
+  "Dockerfile",
+  "README.md",
+  "SECURITY.md",
+  "LICENSE",
+]
 
 [tool.pytest.ini_options]
 addopts = "-q"

@@ -10,6 +10,7 @@
   <a href="https://github.com/robycinix/git_command_center/actions/workflows/ci.yml"><img src="https://github.com/robycinix/git_command_center/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/Python-3.13%2B-3776AB?logo=python&logoColor=white" alt="Python 3.13+">
   <img src="https://img.shields.io/badge/Textual-TUI-7C3AED" alt="Textual TUI">
+  <a href="https://github.com/robycinix/git_command_center/releases"><img src="https://img.shields.io/github/v/release/robycinix/git_command_center" alt="GitHub release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22C55E" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/status-alpha-F59E0B" alt="Alpha status">
 </p>
@@ -82,6 +83,19 @@ gcc-tui
 The setup is idempotent: running it again reports that GCC is already present
 instead of adding a duplicate `PATH` entry. On Unix-like systems GCC updates the
 shell profile; on Windows it updates the current user's environment variables.
+
+## Release Packages
+
+Each [GitHub release](https://github.com/robycinix/git_command_center/releases)
+contains a Python wheel, source archive, Windows executable, Linux executable,
+macOS executable and SHA-256 checksums.
+
+The GitHub Container Registry package can run against the repository in the
+current directory:
+
+```bash
+docker run --rm -it -v "$PWD:/workspace" ghcr.io/robycinix/git_command_center:latest
+```
 
 Open a specific repository:
 
