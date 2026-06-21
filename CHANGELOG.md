@@ -13,6 +13,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - English, German, Spanish, French, Portuguese and Italian interface catalogs
 - Localized wizard plans, safety prompts, dashboard labels and learning content
 - `--language` command-line override with English fallback for unsupported locales
+- Idempotent `--setup-path` command for Windows, Linux, macOS and WSL
 
 ### Planned
 

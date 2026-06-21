@@ -50,6 +50,10 @@ settings.save: Salvar preferências
 settings.current_file: "Arquivo de configuração: `{path}`"
 settings.restart_hint: Alterações de idioma são aplicadas na próxima inicialização do GCC.
 settings.saved: Preferências salvas. Reinicie o GCC para aplicar o idioma.
+path_setup.added: "`{path}` foi adicionado ao PATH do usuário."
+path_setup.already: "O GCC já está disponível no PATH (`{path}`)."
+path_setup.reopen: "Abra um novo terminal e execute: gcc-tui"
+path_setup.missing: Execute primeiro `python -m pip install -e .`; o iniciador gcc-tui não foi encontrado.
 table.command: Comando
 table.category: Categoria
 table.risk: Risco

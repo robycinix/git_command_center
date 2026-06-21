@@ -67,6 +67,22 @@ python -m pip install -e .
 python -m git_command_center
 ```
 
+Make the shorter command available from every terminal directory:
+
+```bash
+python -m git_command_center --setup-path
+```
+
+Open a new terminal after the command completes, then launch GCC from anywhere:
+
+```bash
+gcc-tui
+```
+
+The setup is idempotent: running it again reports that GCC is already present
+instead of adding a duplicate `PATH` entry. On Unix-like systems GCC updates the
+shell profile; on Windows it updates the current user's environment variables.
+
 Open a specific repository:
 
 ```bash
