@@ -1,0 +1,274 @@
+- id: init
+  name: git init
+  syntax: git init [-b branch]
+  category: Repository
+  description: Crea un nuovo repository Git nella cartella corrente.
+  use_when: Stai iniziando a versionare un progetto locale.
+  avoid_when: La cartella e gia dentro un repository esistente.
+  example: git init -b main
+  risk: low
+  common_errors: ["Inizializzare la cartella sbagliata"]
+  consequences: Crea la cartella nascosta .git, senza modificare i file del progetto.
+  rollback: Elimina .git solo dopo aver verificato di non perdere la cronologia.
+
+- id: clone
+  name: git clone
+  syntax: git clone <url> [directory]
+  category: Repository
+  description: Copia un repository remoto e ne configura il remote origin.
+  use_when: Vuoi lavorare localmente su un progetto gia esistente.
+  avoid_when: Hai gia una copia locale con modifiche non pubblicate.
+  example: git clone https://github.com/example/project.git
+  risk: low
+  common_errors: ["URL o credenziali errate", "Directory di destinazione non vuota"]
+  consequences: Scarica cronologia, branch predefinito e file di lavoro.
+  rollback: Elimina la nuova directory se non contiene lavoro da conservare.
+
+- id: status
+  name: git status
+  syntax: git status [--short]
+  category: Repository
+  description: Mostra branch, file modificati, staged e non tracciati.
+  use_when: Prima e dopo ogni operazione che cambia il repository.
+  avoid_when: Non esistono controindicazioni; e un comando di sola lettura.
+  example: git status --short
+  risk: safe
+  common_errors: ["Confondere staged e committed"]
+  consequences: Non modifica nulla.
+  rollback: null
+
+- id: add
+  name: git add
+  syntax: git add <path> | --all
+  category: Commit
+  description: Prepara nel staging area il contenuto del prossimo commit.
+  use_when: Hai verificato le modifiche che vuoi includere.
+  avoid_when: Stai aggiungendo alla cieca file generati, segreti o binari pesanti.
+  example: git add src/app.py tests/test_app.py
+  risk: low
+  common_errors: ["Aggiungere credenziali", "Dimenticare nuovi file"]
+  consequences: Aggiorna solo l'indice; non crea ancora un commit.
+  rollback: git restore --staged <path>
+
+- id: commit
+  name: git commit
+  syntax: git commit -m <messaggio>
+  category: Commit
+  description: Registra una snapshot permanente delle modifiche staged.
+  use_when: Le modifiche formano una unita coerente e testata.
+  avoid_when: Il commit contiene lavoro incompleto o non correlato.
+  example: git commit -m "Aggiunge validazione del profilo"
+  risk: low
+  common_errors: ["Messaggi vaghi", "Commit troppo grandi"]
+  consequences: Avanza il branch locale con un nuovo commit.
+  rollback: git reset --soft HEAD~1 se il commit non e stato condiviso.
+
+- id: switch
+  name: git switch
+  syntax: git switch <branch> | -c <nuovo-branch>
+  category: Branch
+  description: Cambia branch o ne crea uno nuovo in modo esplicito.
+  use_when: Vuoi isolare o cambiare linea di sviluppo.
+  avoid_when: Le modifiche locali impediscono un cambio sicuro.
+  example: git switch -c feature/login
+  risk: low
+  common_errors: ["Creare il branch dal punto di partenza sbagliato"]
+  consequences: Aggiorna HEAD e i file di lavoro.
+  rollback: Torna al branch precedente con git switch -.
+
+- id: branch-delete
+  name: git branch -d
+  syntax: git branch -d <branch>
+  category: Branch
+  description: Elimina un branch locale gia integrato.
+  use_when: Il lavoro del branch e stato unito e non serve piu.
+  avoid_when: Il branch contiene commit non integrati.
+  example: git branch -d feature/login
+  risk: high
+  common_errors: ["Eliminare il branch sbagliato"]
+  consequences: Rimuove il riferimento locale, non i branch remoti.
+  rollback: Ricrea il branch dal commit recuperato tramite reflog.
+
+- id: merge
+  name: git merge
+  syntax: git merge <branch>
+  category: Merge
+  description: Integra nel branch corrente la cronologia di un altro branch.
+  use_when: Vuoi preservare la struttura storica dei branch.
+  avoid_when: Non hai aggiornato e verificato entrambi i branch.
+  example: git merge feature/login
+  risk: medium
+  common_errors: ["Eseguire il merge nel branch di destinazione sbagliato"]
+  consequences: Crea un merge commit oppure esegue un fast-forward.
+  rollback: git merge --abort durante i conflitti; reflog dopo il completamento.
+
+- id: rebase
+  name: git rebase
+  syntax: git rebase <base>
+  category: Rebase
+  description: Riposiziona i commit del branch sopra una nuova base.
+  use_when: Vuoi una cronologia lineare prima di condividere il branch.
+  avoid_when: I commit sono gia usati da altre persone.
+  example: git rebase main
+  risk: high
+  common_errors: ["Riscrivere cronologia condivisa", "Saltare commit durante i conflitti"]
+  consequences: Crea nuovi commit con hash differenti.
+  rollback: git rebase --abort durante l'operazione; usa reflog dopo.
+
+- id: fetch
+  name: git fetch
+  syntax: git fetch [remote] [--prune]
+  category: Remote
+  description: Scarica riferimenti remoti senza cambiare i file locali.
+  use_when: Vuoi vedere gli aggiornamenti prima di integrarli.
+  avoid_when: Non esistono particolari controindicazioni.
+  example: git fetch origin --prune
+  risk: safe
+  common_errors: ["Pensare che aggiorni automaticamente il branch locale"]
+  consequences: Aggiorna i riferimenti remoti e, con --prune, rimuove quelli obsoleti.
+  rollback: null
+
+- id: pull-ff
+  name: git pull --ff-only
+  syntax: git pull --ff-only
+  category: Remote
+  description: Scarica e integra solo se e possibile un fast-forward.
+  use_when: Vuoi aggiornare senza creare merge commit inattesi.
+  avoid_when: Il branch locale e remoto sono divergenti.
+  example: git pull --ff-only
+  risk: low
+  common_errors: ["Non avere configurato un upstream"]
+  consequences: Avanza il branch locale senza riscrivere commit.
+  rollback: Consulta reflog per tornare al precedente HEAD.
+
+- id: push
+  name: git push
+  syntax: git push [-u origin branch]
+  category: Remote
+  description: Pubblica i commit locali nel repository remoto.
+  use_when: Hai verificato commit, test e branch di destinazione.
+  avoid_when: Stai per pubblicare segreti o lavoro non verificato.
+  example: git push -u origin feature/login
+  risk: medium
+  common_errors: ["Push sul branch errato", "Dati sensibili nella cronologia"]
+  consequences: Rende i commit disponibili ad altri collaboratori.
+  rollback: Crea un commit di revert; evita di riscrivere branch condivisi.
+
+- id: force-push
+  name: git push --force-with-lease
+  syntax: git push --force-with-lease
+  category: Remote
+  description: Sostituisce la cronologia remota solo se non e cambiata dall'ultimo fetch.
+  use_when: Devi pubblicare un rebase su un branch personale.
+  avoid_when: Il branch e condiviso o protetto.
+  example: git push --force-with-lease origin feature/login
+  risk: critical
+  common_errors: ["Sovrascrivere commit altrui", "Usare --force invece di --force-with-lease"]
+  consequences: Puo rendere irraggiungibili commit presenti sul remoto.
+  rollback: Recupera l'hash precedente dai reflog locali o dal provider.
+  recommended_alternative: Crea un nuovo branch o usa un normale push.
+
+- id: stash
+  name: git stash push
+  syntax: git stash push -m <messaggio>
+  category: Stash
+  description: Accantona temporaneamente modifiche tracciate senza committarle.
+  use_when: Devi cambiare contesto con lavoro incompleto.
+  avoid_when: Vuoi conservare a lungo lavoro importante senza backup.
+  example: git stash push -u -m "WIP login"
+  risk: low
+  common_errors: ["Dimenticare -u per file non tracciati", "Dimenticare stash vecchi"]
+  consequences: Ripristina un worktree pulito e crea una voce stash.
+  rollback: git stash pop oppure git stash apply.
+
+- id: restore
+  name: git restore
+  syntax: git restore [--staged] <path>
+  category: Recovery
+  description: Ripristina file del worktree o rimuove file dallo staging.
+  use_when: Vuoi annullare una selezione staged o modifiche locali specifiche.
+  avoid_when: Le modifiche non salvate devono essere conservate.
+  example: git restore --staged config.yaml
+  risk: high
+  common_errors: ["Omettere --staged e perdere modifiche locali"]
+  consequences: Senza --staged sovrascrive il contenuto locale del file.
+  rollback: Le modifiche non committate potrebbero non essere recuperabili.
+
+- id: reset-hard
+  name: git reset --hard
+  syntax: git reset --hard <commit>
+  category: Recovery
+  description: Sposta il branch e sovrascrive indice e file di lavoro.
+  use_when: Hai un backup verificato e vuoi abbandonare tutte le modifiche locali.
+  avoid_when: Esiste qualsiasi modifica non salvata da conservare.
+  example: git reset --hard HEAD~1
+  risk: critical
+  common_errors: ["Perdere modifiche non committate", "Riscrivere un branch condiviso"]
+  consequences: Elimina le modifiche locali non salvate e sposta HEAD.
+  rollback: I commit possono essere nel reflog; le modifiche non committate no.
+  recommended_alternative: Usa git stash oppure git reset --soft.
+
+- id: reflog
+  name: git reflog
+  syntax: git reflog [show]
+  category: Recovery
+  description: Mostra gli spostamenti locali di HEAD e altri riferimenti.
+  use_when: Devi recuperare commit dopo reset, rebase o cancellazioni.
+  avoid_when: Cerchi eventi avvenuti solo su un altro computer.
+  example: git reflog --date=local
+  risk: safe
+  common_errors: ["Aspettare troppo: le voci possono scadere"]
+  consequences: Non modifica nulla.
+  rollback: null
+
+- id: tag
+  name: git tag
+  syntax: git tag -a <nome> -m <messaggio>
+  category: Tag
+  description: Crea un riferimento nominato, tipicamente per una release.
+  use_when: Un commit rappresenta una versione da distribuire.
+  avoid_when: Non hai verificato che HEAD punti al commit corretto.
+  example: git tag -a v1.0.0 -m "Release 1.0.0"
+  risk: low
+  common_errors: ["Taggare il commit errato", "Dimenticare di pubblicare il tag"]
+  consequences: Crea un tag locale; git push origin v1.0.0 lo pubblica.
+  rollback: git tag -d <nome> prima di eliminare l'eventuale tag remoto.
+
+- id: log
+  name: git log
+  syntax: git log --graph --oneline --decorate --all
+  category: Log
+  description: Esplora cronologia, branch, merge e tag.
+  use_when: Vuoi capire come il repository e arrivato allo stato corrente.
+  avoid_when: Non esistono controindicazioni; e di sola lettura.
+  example: git log --graph --oneline --decorate --all
+  risk: safe
+  common_errors: ["Leggere solo il branch corrente e ignorare --all"]
+  consequences: Non modifica nulla.
+  rollback: null
+
+- id: worktree
+  name: git worktree add
+  syntax: git worktree add <percorso> <branch>
+  category: Workflow
+  description: Crea una seconda cartella di lavoro collegata allo stesso repository.
+  use_when: Devi lavorare su due branch in parallelo senza continui checkout.
+  avoid_when: Non hai chiaro quale branch appartiene a ciascuna cartella.
+  example: git worktree add ../project-hotfix hotfix/login
+  risk: medium
+  common_errors: ["Modificare la worktree sbagliata", "Rimuovere la cartella manualmente"]
+  consequences: Registra una nuova worktree e materializza il branch nel percorso indicato.
+  rollback: Usa git worktree remove <percorso> dopo aver salvato tutte le modifiche.
+
+- id: github-pr-status
+  name: gh pr status
+  syntax: gh pr status
+  category: GitHub
+  description: Mostra le pull request rilevanti tramite la GitHub CLI opzionale.
+  use_when: GitHub CLI e autenticata e vuoi controllare rapidamente le pull request.
+  avoid_when: Il repository non usa GitHub o non vuoi effettuare richieste di rete.
+  example: gh pr status
+  risk: safe
+  common_errors: ["GitHub CLI non installata", "Account o host non autenticato"]
+  consequences: Legge dati dal provider; non modifica il repository o le pull request.
+  rollback: null

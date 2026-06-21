@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Git Command Center</title>
+  <desc id="desc">A visual, guided and safe Git terminal assistant.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08111f"/>
+      <stop offset="0.55" stop-color="#111b35"/>
+      <stop offset="1" stop-color="#182447"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="1" stop-color="#818cf8"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#5eead4" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#94a3b8" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000" flood-opacity="0.38"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="420" rx="28" fill="url(#background)"/>
+  <rect width="1200" height="420" rx="28" fill="url(#grid)"/>
+  <circle cx="1010" cy="45" r="300" fill="url(#glow)"/>
+
+  <g transform="translate(76 74)">
+    <rect width="76" height="76" rx="18" fill="url(#accent)"/>
+    <path d="M24 24h28v8H32v12h18v8H32v16h-8z" fill="#08111f"/>
+    <circle cx="54" cy="58" r="6" fill="#08111f"/>
+  </g>
+
+  <text x="76" y="205" fill="#f8fafc" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="57" font-weight="700" letter-spacing="-2">Git Command Center</text>
+  <text x="78" y="252" fill="#a5b4fc" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="23" font-weight="500">See the state. Understand the command. Move with confidence.</text>
+
+  <g transform="translate(78 300)" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="16" font-weight="600">
+    <rect width="112" height="37" rx="18.5" fill="#163c42" stroke="#5eead4" stroke-opacity="0.5"/>
+    <text x="56" y="24" fill="#99f6e4" text-anchor="middle">VISUAL</text>
+    <rect x="126" width="112" height="37" rx="18.5" fill="#252d57" stroke="#818cf8" stroke-opacity="0.55"/>
+    <text x="182" y="24" fill="#c7d2fe" text-anchor="middle">GUIDED</text>
+    <rect x="252" width="100" height="37" rx="18.5" fill="#3d273c" stroke="#f0abfc" stroke-opacity="0.45"/>
+    <text x="302" y="24" fill="#f5d0fe" text-anchor="middle">SAFE</text>
+  </g>
+
+  <g transform="translate(755 72)" filter="url(#shadow)">
+    <rect width="370" height="276" rx="16" fill="#070d19" stroke="#334155" stroke-width="2"/>
+    <rect width="370" height="42" rx="16" fill="#141e32"/>
+    <rect y="28" width="370" height="14" fill="#141e32"/>
+    <circle cx="25" cy="21" r="6" fill="#fb7185"/>
+    <circle cx="45" cy="21" r="6" fill="#facc15"/>
+    <circle cx="65" cy="21" r="6" fill="#4ade80"/>
+    <text x="185" y="26" fill="#94a3b8" text-anchor="middle" font-family="Consolas, monospace" font-size="13">GCC / dashboard</text>
+
+    <g font-family="Consolas, monospace" font-size="14">
+      <text x="22" y="72" fill="#5eead4">repository</text>
+      <text x="122" y="72" fill="#e2e8f0">git_command_center</text>
+      <text x="22" y="100" fill="#818cf8">branch</text>
+      <text x="122" y="100" fill="#e2e8f0">main</text>
+      <text x="22" y="128" fill="#94a3b8">sync</text>
+      <text x="122" y="128" fill="#4ade80">synchronized</text>
+      <line x1="22" y1="150" x2="348" y2="150" stroke="#334155"/>
+      <text x="22" y="180" fill="#cbd5e1">modified</text>
+      <text x="140" y="180" fill="#facc15">3</text>
+      <text x="190" y="180" fill="#cbd5e1">staged</text>
+      <text x="285" y="180" fill="#4ade80">2</text>
+      <text x="22" y="212" fill="#cbd5e1">risk</text>
+      <rect x="88" y="195" width="82" height="24" rx="12" fill="#462d32"/>
+      <text x="129" y="212" fill="#fda4af" text-anchor="middle">CRITICAL</text>
+      <text x="22" y="249" fill="#94a3b8">$</text>
+      <text x="44" y="249" fill="#e2e8f0">git reset --hard HEAD~1</text>
+      <rect x="326" y="234" width="9" height="18" fill="#5eead4"/>
+    </g>
+  </g>
+</svg>

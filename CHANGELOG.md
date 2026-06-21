@@ -1,0 +1,30 @@
+# Changelog
+
+All notable changes to Git Command Center will be documented here.
+
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Planned
+
+- Side-by-side syntax-aware diff viewer
+- Guided three-way conflict editor
+- Opt-in AI and GitHub provider adapters
+
+## [0.1.0] - 2026-06-21
+
+### Added
+
+- Textual repository dashboard and contextual status strip
+- Educational command catalog with live category and risk filters
+- Intent-based command wizard with command preview and rollback guidance
+- Commit graph, branch table, diff viewer and reflog recovery timeline
+- Multi-level learning content and disposable Git sandboxes
+- Critical-operation confirmation policy requiring `CONFERMO`
+- YAML configuration, built-in themes and customizable shortcuts
+- Python packaging, PyInstaller build configuration and automated test suite
+
+[Unreleased]: https://github.com/robycinix/git_command_center/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/robycinix/git_command_center/releases/tag/v0.1.0

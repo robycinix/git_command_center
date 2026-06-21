@@ -1,0 +1,118 @@
+Screen {
+    background: $surface;
+}
+
+Header {
+    background: $primary-background;
+    color: $text;
+}
+
+#repo-strip {
+    height: 3;
+    padding: 0 2;
+    background: $panel;
+    border-bottom: solid $primary;
+}
+
+TabbedContent {
+    height: 1fr;
+}
+
+TabPane {
+    padding: 1 2;
+}
+
+.toolbar {
+    height: auto;
+    margin-bottom: 1;
+}
+
+.toolbar Input {
+    width: 1fr;
+    margin-right: 1;
+}
+
+.toolbar Select {
+    width: 32;
+    margin-right: 1;
+}
+
+.toolbar Button {
+    margin-right: 1;
+}
+
+.split-left {
+    width: 44%;
+    height: 1fr;
+    margin-right: 1;
+}
+
+.split-right {
+    width: 56%;
+    height: 1fr;
+    padding: 1;
+    border: round $primary;
+    overflow-y: auto;
+}
+
+#dashboard-content {
+    height: 1fr;
+    padding: 1 2;
+    border: round $primary;
+}
+
+#command-table, #history-table, #branch-table, #reflog-table {
+    height: 1fr;
+}
+
+#command-details, #lesson-content, #plan-preview {
+    height: 1fr;
+    overflow-y: auto;
+}
+
+#history-log, #diff-log {
+    height: 1fr;
+    border: round $primary;
+}
+
+#operation-output {
+    height: 7;
+    padding: 1;
+    border: round $secondary;
+    margin-top: 1;
+}
+
+.hint {
+    color: $text-muted;
+    margin-bottom: 1;
+}
+
+ConfirmScreen {
+    align: center middle;
+    background: rgba(0, 0, 0, 0.65);
+}
+
+#confirm-dialog {
+    width: 72;
+    height: auto;
+    padding: 1 2;
+    background: $panel;
+    border: thick $warning;
+}
+
+#confirm-dialog Input {
+    margin: 1 0;
+}
+
+#confirm-buttons {
+    height: auto;
+    align-horizontal: right;
+}
+
+#confirm-buttons Button {
+    margin-left: 1;
+}
+
+Footer {
+    background: $primary-background;
+}
