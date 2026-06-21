@@ -60,6 +60,8 @@ optimizes for understanding:
 Python 3.13 or newer is required.
 
 ```bash
+git clone https://github.com/robycinix/git_command_center.git
+cd git_command_center
 python -m pip install -e .
 gcc-tui
 ```
@@ -73,7 +75,7 @@ gcc-tui /path/to/repository
 Install in an isolated environment with `pipx`:
 
 ```bash
-pipx install git-command-center
+pipx install .
 git-command-center /path/to/repository
 ```
 
