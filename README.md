@@ -63,14 +63,19 @@ Python 3.13 or newer is required.
 git clone https://github.com/robycinix/git_command_center.git
 cd git_command_center
 python -m pip install -e .
-gcc-tui
+python -m git_command_center
 ```
 
 Open a specific repository:
 
 ```bash
-gcc-tui /path/to/repository
+python -m git_command_center /path/to/repository
 ```
+
+The package also installs the shorter `gcc-tui` and `git-command-center`
+commands. If Windows reports that they are not recognized, the Python user
+scripts directory is not in `PATH`; `python -m git_command_center` works without
+changing `PATH`.
 
 Install in an isolated environment with `pipx`:
 
