@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ctypes
+import importlib
 import os
 import shlex
 import shutil
@@ -11,6 +12,8 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
+from types import ModuleType
+from typing import Any
 
 
 class PathSetupStatus(StrEnum):
@@ -27,6 +30,10 @@ class PathSetupResult:
 
 class PathSetupError(RuntimeError):
     """Raised when the installed console launcher cannot be located."""
+
+
+def _module_attribute(module: ModuleType, name: str) -> Any:
+    return getattr(module, name)
 
 
 def _normalized(value: str, *, case_sensitive: bool) -> str:
@@ -89,26 +96,35 @@ def find_scripts_directory() -> Path:
 
 
 def _read_windows_user_path() -> str:
-    import winreg
+    winreg = importlib.import_module("winreg")
+    open_key = _module_attribute(winreg, "OpenKey")
+    hkey_current_user = _module_attribute(winreg, "HKEY_CURRENT_USER")
+    query_value = _module_attribute(winreg, "QueryValueEx")
 
     try:
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
-            value, _kind = winreg.QueryValueEx(key, "Path")
+        with open_key(hkey_current_user, "Environment") as key:
+            value, _kind = query_value(key, "Path")
             return str(value)
     except FileNotFoundError:
         return ""
 
 
 def _write_windows_user_path(value: str) -> None:
-    import winreg
+    winreg = importlib.import_module("winreg")
+    create_key = _module_attribute(winreg, "CreateKeyEx")
+    hkey_current_user = _module_attribute(winreg, "HKEY_CURRENT_USER")
+    reg_expand_sz = _module_attribute(winreg, "REG_EXPAND_SZ")
+    reg_sz = _module_attribute(winreg, "REG_SZ")
+    set_value = _module_attribute(winreg, "SetValueEx")
 
-    with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, "Environment") as key:
-        kind = winreg.REG_EXPAND_SZ if "%" in value else winreg.REG_SZ
-        winreg.SetValueEx(key, "Path", 0, kind, value)
+    with create_key(hkey_current_user, "Environment") as key:
+        kind = reg_expand_sz if "%" in value else reg_sz
+        set_value(key, "Path", 0, kind, value)
 
     try:
+        windll = _module_attribute(ctypes, "windll")
         result = ctypes.c_size_t()
-        ctypes.windll.user32.SendMessageTimeoutW(
+        windll.user32.SendMessageTimeoutW(
             0xFFFF,
             0x001A,
             0,
