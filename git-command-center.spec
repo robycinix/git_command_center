@@ -2,7 +2,10 @@
 
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
-datas = collect_data_files("git_command_center", includes=["data/*.yaml", "themes/*.tcss"])
+datas = collect_data_files(
+    "git_command_center",
+    includes=["data/*.yaml", "data/locales/*.yaml", "themes/*.tcss"],
+)
 hiddenimports = collect_submodules("textual.widgets")
 
 a = Analysis(

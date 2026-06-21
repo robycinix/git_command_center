@@ -1,0 +1,274 @@
+- id: init
+  name: git init
+  syntax: git init [-b branch]
+  category: Repository
+  description: Create a new Git repository in the current directory.
+  use_when: You are starting to version a local project.
+  avoid_when: The directory is already inside an existing repository.
+  example: git init -b main
+  risk: low
+  common_errors: ["Initializing the wrong directory"]
+  consequences: Creates the hidden .git directory without changing project files.
+  rollback: Remove .git only after verifying that no history must be preserved.
+
+- id: clone
+  name: git clone
+  syntax: git clone <url> [directory]
+  category: Repository
+  description: Copy a remote repository and configure its origin remote.
+  use_when: You want to work locally on an existing project.
+  avoid_when: You already have a local copy with unpublished changes.
+  example: git clone https://github.com/example/project.git
+  risk: low
+  common_errors: ["Invalid URL or credentials", "Destination directory is not empty"]
+  consequences: Downloads history, the default branch and working files.
+  rollback: Remove the new directory if it contains no work that must be kept.
+
+- id: status
+  name: git status
+  syntax: git status [--short]
+  category: Repository
+  description: Show the branch plus modified, staged and untracked files.
+  use_when: Before and after every operation that changes the repository.
+  avoid_when: There is no downside; this command is read-only.
+  example: git status --short
+  risk: safe
+  common_errors: ["Confusing staged changes with committed changes"]
+  consequences: Changes nothing.
+  rollback: null
+
+- id: add
+  name: git add
+  syntax: git add <path> | --all
+  category: Commit
+  description: Prepare content in the staging area for the next commit.
+  use_when: You have reviewed the changes you want to include.
+  avoid_when: You may be adding generated files, secrets or large binaries blindly.
+  example: git add src/app.py tests/test_app.py
+  risk: low
+  common_errors: ["Adding credentials", "Forgetting new files"]
+  consequences: Updates the index only; it does not create a commit.
+  rollback: git restore --staged <path>
+
+- id: commit
+  name: git commit
+  syntax: git commit -m <message>
+  category: Commit
+  description: Record a permanent snapshot of staged changes.
+  use_when: The changes form one coherent, tested unit.
+  avoid_when: The commit contains unfinished or unrelated work.
+  example: git commit -m "Add profile validation"
+  risk: low
+  common_errors: ["Vague messages", "Commits that are too large"]
+  consequences: Advances the local branch with a new commit.
+  rollback: git reset --soft HEAD~1 if the commit has not been shared.
+
+- id: switch
+  name: git switch
+  syntax: git switch <branch> | -c <new-branch>
+  category: Branch
+  description: Switch branches or explicitly create a new one.
+  use_when: You want to isolate work or change development lines.
+  avoid_when: Local changes prevent a safe switch.
+  example: git switch -c feature/login
+  risk: low
+  common_errors: ["Creating the branch from the wrong starting point"]
+  consequences: Updates HEAD and working files.
+  rollback: Return to the previous branch with git switch -.
+
+- id: branch-delete
+  name: git branch -d
+  syntax: git branch -d <branch>
+  category: Branch
+  description: Delete a local branch that has already been integrated.
+  use_when: The branch work has been merged and is no longer needed.
+  avoid_when: The branch contains commits that have not been integrated.
+  example: git branch -d feature/login
+  risk: high
+  common_errors: ["Deleting the wrong branch"]
+  consequences: Removes the local reference, not the remote branch.
+  rollback: Recreate the branch from a commit found through reflog.
+
+- id: merge
+  name: git merge
+  syntax: git merge <branch>
+  category: Merge
+  description: Integrate another branch history into the current branch.
+  use_when: You want to preserve the historical branch structure.
+  avoid_when: You have not updated and verified both branches.
+  example: git merge feature/login
+  risk: medium
+  common_errors: ["Running the merge on the wrong destination branch"]
+  consequences: Creates a merge commit or performs a fast-forward.
+  rollback: Use git merge --abort during conflicts; use reflog after completion.
+
+- id: rebase
+  name: git rebase
+  syntax: git rebase <base>
+  category: Rebase
+  description: Replay branch commits on top of a new base.
+  use_when: You want linear history before sharing the branch.
+  avoid_when: Other people already use these commits.
+  example: git rebase main
+  risk: high
+  common_errors: ["Rewriting shared history", "Skipping commits during conflicts"]
+  consequences: Creates new commits with different hashes.
+  rollback: Use git rebase --abort during the operation; use reflog afterward.
+
+- id: fetch
+  name: git fetch
+  syntax: git fetch [remote] [--prune]
+  category: Remote
+  description: Download remote references without changing local files.
+  use_when: You want to inspect updates before integrating them.
+  avoid_when: There are no notable downsides.
+  example: git fetch origin --prune
+  risk: safe
+  common_errors: ["Assuming it updates the local branch automatically"]
+  consequences: Updates remote references and optionally removes stale ones.
+  rollback: null
+
+- id: pull-ff
+  name: git pull --ff-only
+  syntax: git pull --ff-only
+  category: Remote
+  description: Download and integrate only when a fast-forward is possible.
+  use_when: You want updates without surprise merge commits.
+  avoid_when: Local and remote branches have diverged.
+  example: git pull --ff-only
+  risk: low
+  common_errors: ["No upstream is configured"]
+  consequences: Advances the local branch without rewriting commits.
+  rollback: Use reflog to return to the previous HEAD.
+
+- id: push
+  name: git push
+  syntax: git push [-u origin branch]
+  category: Remote
+  description: Publish local commits to a remote repository.
+  use_when: You have verified commits, tests and the destination branch.
+  avoid_when: You may publish secrets or unverified work.
+  example: git push -u origin feature/login
+  risk: medium
+  common_errors: ["Pushing to the wrong branch", "Sensitive data in history"]
+  consequences: Makes commits available to collaborators.
+  rollback: Create a revert commit; avoid rewriting shared branches.
+
+- id: force-push
+  name: git push --force-with-lease
+  syntax: git push --force-with-lease
+  category: Remote
+  description: Replace remote history only if it has not changed since the last fetch.
+  use_when: You must publish a rebase on a personal branch.
+  avoid_when: The branch is shared or protected.
+  example: git push --force-with-lease origin feature/login
+  risk: critical
+  common_errors: ["Overwriting others' commits", "Using --force instead"]
+  consequences: Can make remote commits unreachable.
+  rollback: Recover the previous hash from local reflogs or the provider.
+  recommended_alternative: Create a new branch or use a normal push.
+
+- id: stash
+  name: git stash push
+  syntax: git stash push -m <message>
+  category: Stash
+  description: Temporarily set aside tracked changes without committing them.
+  use_when: You must change context with unfinished work.
+  avoid_when: Important work needs long-term storage without a backup.
+  example: git stash push -u -m "WIP login"
+  risk: low
+  common_errors: ["Forgetting -u for untracked files", "Forgetting old stashes"]
+  consequences: Restores a clean worktree and creates a stash entry.
+  rollback: Use git stash pop or git stash apply.
+
+- id: restore
+  name: git restore
+  syntax: git restore [--staged] <path>
+  category: Recovery
+  description: Restore working files or remove files from the staging area.
+  use_when: You want to unstage a selection or discard specific local changes.
+  avoid_when: Unsaved changes must be preserved.
+  example: git restore --staged config.yaml
+  risk: high
+  common_errors: ["Omitting --staged and losing local changes"]
+  consequences: Without --staged, overwrites the local file content.
+  rollback: Uncommitted changes might not be recoverable.
+
+- id: reset-hard
+  name: git reset --hard
+  syntax: git reset --hard <commit>
+  category: Recovery
+  description: Move the branch and overwrite the index and working files.
+  use_when: You have a verified backup and want to abandon all local changes.
+  avoid_when: Any unsaved change must be preserved.
+  example: git reset --hard HEAD~1
+  risk: critical
+  common_errors: ["Losing uncommitted changes", "Rewriting a shared branch"]
+  consequences: Deletes unsaved local changes and moves HEAD.
+  rollback: Commits may remain in reflog; uncommitted changes do not.
+  recommended_alternative: Use git stash or git reset --soft.
+
+- id: reflog
+  name: git reflog
+  syntax: git reflog [show]
+  category: Recovery
+  description: Show local movements of HEAD and other references.
+  use_when: You need commits after a reset, rebase or branch deletion.
+  avoid_when: The event happened only on another computer.
+  example: git reflog --date=local
+  risk: safe
+  common_errors: ["Waiting too long because entries can expire"]
+  consequences: Changes nothing.
+  rollback: null
+
+- id: tag
+  name: git tag
+  syntax: git tag -a <name> -m <message>
+  category: Tag
+  description: Create a named reference, typically for a release.
+  use_when: A commit represents a version to distribute.
+  avoid_when: You have not verified that HEAD points to the right commit.
+  example: git tag -a v1.0.0 -m "Release 1.0.0"
+  risk: low
+  common_errors: ["Tagging the wrong commit", "Forgetting to publish the tag"]
+  consequences: Creates a local tag; git push origin v1.0.0 publishes it.
+  rollback: Use git tag -d <name> before deleting any remote tag.
+
+- id: log
+  name: git log
+  syntax: git log --graph --oneline --decorate --all
+  category: Log
+  description: Explore history, branches, merges and tags.
+  use_when: You want to understand how the repository reached its current state.
+  avoid_when: There is no downside; it is read-only.
+  example: git log --graph --oneline --decorate --all
+  risk: safe
+  common_errors: ["Reading only the current branch and forgetting --all"]
+  consequences: Changes nothing.
+  rollback: null
+
+- id: worktree
+  name: git worktree add
+  syntax: git worktree add <path> <branch>
+  category: Workflow
+  description: Create a second working directory connected to the same repository.
+  use_when: You need to work on two branches in parallel.
+  avoid_when: You cannot keep track of which branch belongs to each directory.
+  example: git worktree add ../project-hotfix hotfix/login
+  risk: medium
+  common_errors: ["Editing the wrong worktree", "Removing its directory manually"]
+  consequences: Registers a worktree and materializes the branch at the path.
+  rollback: Use git worktree remove <path> after saving every change.
+
+- id: github-pr-status
+  name: gh pr status
+  syntax: gh pr status
+  category: GitHub
+  description: Show relevant pull requests through the optional GitHub CLI.
+  use_when: GitHub CLI is authenticated and you want a quick pull-request overview.
+  avoid_when: The repository is not on GitHub or you do not want network requests.
+  example: gh pr status
+  risk: safe
+  common_errors: ["GitHub CLI is missing", "Account or host is not authenticated"]
+  consequences: Reads provider data without modifying the repository or pull requests.
+  rollback: null

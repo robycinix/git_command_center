@@ -14,7 +14,8 @@ not coupled to Git command parsing or future hosted services.
 - `ai/`: provider protocol and a local disabled provider. No network call is
   made by the current release.
 - `config/`: validated YAML settings and platform-specific config paths.
-- `data/`: packaged educational command records.
+- `i18n/`: locale detection, translation lookup and English fallback behavior.
+- `data/`: packaged educational command records and translation catalogs.
 - `themes/` and `widgets/`: presentation resources and future reusable widgets.
 
 ## Data flow

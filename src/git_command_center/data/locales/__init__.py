@@ -1,0 +1,1 @@
+"""Packaged UI translation catalogs."""

@@ -26,92 +26,43 @@ from textual.widgets import (
     TabPane,
 )
 
-from git_command_center.config.settings import AppSettings
+from git_command_center.config.settings import (
+    AppSettings,
+    default_config_path,
+    save_settings,
+)
 from git_command_center.core.models import CommandGuide, CommandPlan, RepositorySnapshot, RiskLevel
 from git_command_center.git.service import GitService, RepositoryError
+from git_command_center.i18n import SUPPORTED_LANGUAGES, Translator
 from git_command_center.services.catalog import CommandCatalog
 from git_command_center.services.planner import GOALS, branch_delete_plan, build_plan
 from git_command_center.services.simulation import SimulationService
 
-LESSONS: dict[str, str] = {
-    "beginner": """# Principiante: le tre aree di Git
-
-Git conserva il lavoro in tre aree: **worktree**, **staging area** e **repository**.
-
-1. Modifica un file nel worktree.
-2. Selezionalo con `git add`.
-3. Crea una snapshot con `git commit`.
-
-## Quiz
-
-`git add` pubblica il file online? **No**: prepara solo il prossimo commit locale.
-
-## Esercizio
-
-Nella sandbox modifica `README.md`, controlla `git status`, aggiungi il file e crea un commit.
-""",
-    "intermediate": """# Intermedio: branch e integrazione
-
-Un branch e un riferimento mobile a un commit. Crea branch piccoli e con uno scopo chiaro.
-
-## Quiz
-
-Su quale branch devi trovarti prima di `git merge feature`? Sul branch che deve ricevere il lavoro.
-
-## Esercizio
-
-Crea `feature/demo`, aggiungi un commit, torna su `main` ed esegui il merge.
-""",
-    "advanced": """# Avanzato: rebase e reflog
-
-Il rebase riscrive i commit. Usalo su lavoro locale, non su cronologia condivisa. Il reflog
-registra gli spostamenti dei riferimenti locali e spesso permette di ritrovare un commit perso.
-
-## Quiz
-
-Perche gli hash cambiano dopo un rebase? Perche cambiano i parent e quindi il contenuto del commit.
-
-## Esercizio
-
-Crea due branch divergenti nella sandbox, esegui un rebase e confronta `git log --graph --all`.
-""",
-    "expert": """# Esperto: collaborazione e recovery
-
-Prima di modificare una cronologia pubblicata, identifica proprietari, branch protetti e
-strategia di rollback. Preferisci `--force-with-lease` a `--force`, solo su branch personali.
-
-## Quiz
-
-Cosa protegge `--force-with-lease`? Impedisce la sovrascrittura se il riferimento remoto e cambiato
-rispetto all'ultima conoscenza locale.
-
-## Esercizio
-
-Simula un reset, individua il vecchio commit nel reflog e ricrea un branch che lo punti.
-""",
-}
-
 
 class ConfirmScreen(ModalScreen[tuple[bool, str]]):
-    def __init__(self, plan: CommandPlan) -> None:
+    def __init__(self, plan: CommandPlan, translator: Translator) -> None:
         super().__init__()
         self.plan = plan
+        self.tr = translator
 
     def compose(self) -> ComposeResult:
         critical = self.plan.risk is RiskLevel.CRITICAL
         command_list = "\n".join(self.plan.display_commands)
         with Vertical(id="confirm-dialog"):
-            yield Static(f"[bold]Conferma: {escape(self.plan.title)}[/bold]")
             yield Static(
-                f"Rischio: [bold]{self.plan.risk.value.upper()}[/bold]\n\n"
+                f"[bold]{escape(self.tr('confirm.title', title=self.plan.title))}[/bold]"
+            )
+            yield Static(
+                f"{self.tr('confirm.risk')}: "
+                f"[bold]{self.tr(f'risk.{self.plan.risk.value}')}[/bold]\n\n"
                 f"{escape(self.plan.explanation)}\n\n[cyan]{escape(command_list)}[/cyan]"
             )
             if critical:
-                yield Static('Seconda conferma richiesta: digita "CONFERMO".')
+                yield Static(self.tr("confirm.critical_prompt"))
                 yield Input(placeholder="CONFERMO", id="typed-confirmation")
             with Horizontal(id="confirm-buttons"):
-                yield Button("Annulla", id="cancel-confirm")
-                yield Button("Esegui", id="accept-confirm", variant="warning")
+                yield Button(self.tr("confirm.cancel"), id="cancel-confirm")
+                yield Button(self.tr("confirm.execute"), id="accept-confirm", variant="warning")
 
     @on(Button.Pressed, "#cancel-confirm")
     def cancel(self) -> None:
@@ -127,43 +78,53 @@ class ConfirmScreen(ModalScreen[tuple[bool, str]]):
 
 class GCCApp(App[None]):
     TITLE = "Git Command Center"
-    SUB_TITLE = "Git visibile, guidato e sicuro"
+    SUB_TITLE = ""
     CSS_PATH = "../themes/gcc.tcss"
     BINDINGS = [
-        Binding("q", "quit", "Esci"),
-        Binding("r", "refresh_repository", "Aggiorna"),
-        Binding("f1", "show_help", "Aiuto"),
+        Binding("q", "quit", "Quit", show=False),
+        Binding("r", "refresh_repository", "Refresh", show=False),
+        Binding("f1", "show_help", "Help", show=False),
     ]
 
-    def __init__(self, service: GitService, settings: AppSettings) -> None:
+    def __init__(
+        self,
+        service: GitService,
+        settings: AppSettings,
+        translator: Translator | None = None,
+    ) -> None:
         super().__init__()
         self.service = service
         self.settings = settings
-        self.catalog = CommandCatalog()
+        self.tr = translator or Translator(settings.language)
+        self.sub_title = self.tr("app.subtitle")
+        self.catalog = CommandCatalog(language=self.tr.language)
         self.current_plan: CommandPlan | None = None
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
-        yield Static("Caricamento repository...", id="repo-strip")
+        yield Static(self.tr("loading.repository"), id="repo-strip")
         with TabbedContent(initial="dashboard"):
-            with TabPane("Dashboard", id="dashboard"):
+            with TabPane(self.tr("tab.dashboard"), id="dashboard"):
                 yield Markdown(id="dashboard-content")
-            with TabPane("Comandi", id="commands"):
+            with TabPane(self.tr("tab.commands"), id="commands"):
                 with Horizontal(classes="toolbar"):
-                    yield Input(placeholder="Ricerca live...", id="command-search")
+                    yield Input(placeholder=self.tr("filter.search"), id="command-search")
                     yield Select(
-                        [("Tutte le categorie", "All")]
-                        + [(category, category) for category in self.catalog.categories],
+                        [(self.tr("filter.all_categories"), "All")]
+                        + [
+                            (self._category_label(category), category)
+                            for category in self.catalog.categories
+                        ],
                         value="All",
                         allow_blank=False,
                         id="command-category",
                     )
                     yield Select(
                         [
-                            ("Qualsiasi rischio", "all"),
-                            ("Fino a basso", "low"),
-                            ("Fino a medio", "medium"),
-                            ("Solo operazioni sicure", "safe"),
+                            (self.tr("filter.any_risk"), "all"),
+                            (self.tr("filter.up_to_low"), "low"),
+                            (self.tr("filter.up_to_medium"), "medium"),
+                            (self.tr("filter.safe_only"), "safe"),
                         ],
                         value="all",
                         allow_blank=False,
@@ -172,68 +133,83 @@ class GCCApp(App[None]):
                 with Horizontal():
                     yield DataTable(id="command-table", classes="split-left")
                     yield Markdown(id="command-details", classes="split-right")
-            with TabPane("Wizard", id="wizard"):
-                yield Static(
-                    "Scegli cosa vuoi ottenere. GCC mostrera sempre i comandi prima di eseguirli.",
-                    classes="hint",
-                )
+            with TabPane(self.tr("tab.wizard"), id="wizard"):
+                yield Static(self.tr("wizard.hint"), classes="hint")
                 with Horizontal(classes="toolbar"):
                     yield Select(
-                        [(label, key) for key, label in GOALS.items()],
+                        [(self.tr(f"goal.{key}"), key) for key in GOALS],
                         value="save",
                         allow_blank=False,
                         id="goal-select",
                     )
                     yield Input(
-                        placeholder="Messaggio, nome branch o percorso file",
+                        placeholder=self.tr("wizard.value_placeholder"),
                         id="goal-value",
                     )
-                    yield Button("Crea piano", id="build-plan", variant="primary")
-                    yield Button("Esegui piano", id="execute-plan", variant="success")
-                yield Markdown("Nessun piano creato.", id="plan-preview")
+                    yield Button(self.tr("wizard.build"), id="build-plan", variant="primary")
+                    yield Button(
+                        self.tr("wizard.execute"), id="execute-plan", variant="success"
+                    )
+                yield Markdown(self.tr("wizard.no_plan"), id="plan-preview")
                 yield Static("", id="operation-output")
-            with TabPane("Cronologia", id="history"):
-                yield Static(
-                    "Grafo di tutti i branch. Hash, data, autore, riferimenti e messaggio.",
-                    classes="hint",
-                )
+            with TabPane(self.tr("tab.history"), id="history"):
+                yield Static(self.tr("history.hint"), classes="hint")
                 yield RichLog(highlight=True, markup=False, wrap=False, id="history-log")
-            with TabPane("Branch", id="branches"):
+            with TabPane(self.tr("tab.branches"), id="branches"):
                 with Horizontal(classes="toolbar"):
-                    yield Input(placeholder="Nome branch", id="branch-name")
-                    yield Button("Crea", id="create-branch", variant="primary")
-                    yield Button("Checkout", id="checkout-branch")
-                    yield Button("Elimina", id="delete-branch", variant="warning")
+                    yield Input(placeholder=self.tr("branch.name_placeholder"), id="branch-name")
+                    yield Button(self.tr("branch.create"), id="create-branch", variant="primary")
+                    yield Button(self.tr("branch.checkout"), id="checkout-branch")
+                    yield Button(self.tr("branch.delete"), id="delete-branch", variant="warning")
                 yield DataTable(id="branch-table")
-            with TabPane("Diff", id="diff"):
+            with TabPane(self.tr("tab.diff"), id="diff"):
                 with Horizontal(classes="toolbar"):
-                    yield Input(placeholder="Percorso opzionale", id="diff-path")
-                    yield Checkbox("Staged", id="diff-staged")
-                    yield Button("Aggiorna diff", id="refresh-diff", variant="primary")
+                    yield Input(placeholder=self.tr("diff.path_placeholder"), id="diff-path")
+                    yield Checkbox(self.tr("diff.staged"), id="diff-staged")
+                    yield Button(self.tr("diff.refresh"), id="refresh-diff", variant="primary")
                 yield RichLog(highlight=True, markup=False, wrap=False, id="diff-log")
-            with TabPane("Recovery", id="recovery"):
-                yield Static(
-                    "Reflog locale in sola lettura. Copia un selettore e verifica "
-                    "prima di recuperare.",
-                    classes="hint",
-                )
+            with TabPane(self.tr("tab.recovery"), id="recovery"):
+                yield Static(self.tr("recovery.hint"), classes="hint")
                 yield DataTable(id="reflog-table")
-            with TabPane("Impara", id="learn"):
+            with TabPane(self.tr("tab.learn"), id="learn"):
                 with Horizontal(classes="toolbar"):
                     yield Select(
                         [
-                            ("Principiante", "beginner"),
-                            ("Intermedio", "intermediate"),
-                            ("Avanzato", "advanced"),
-                            ("Esperto", "expert"),
+                            (self.tr("learn.beginner"), "beginner"),
+                            (self.tr("learn.intermediate"), "intermediate"),
+                            (self.tr("learn.advanced"), "advanced"),
+                            (self.tr("learn.expert"), "expert"),
                         ],
                         value="beginner",
                         allow_blank=False,
                         id="lesson-select",
                     )
-                    yield Button("Crea sandbox", id="create-sandbox", variant="primary")
-                yield Markdown(LESSONS["beginner"], id="lesson-content")
+                    yield Button(
+                        self.tr("learn.create_sandbox"),
+                        id="create-sandbox",
+                        variant="primary",
+                    )
+                yield Markdown(self.tr("lesson.beginner"), id="lesson-content")
                 yield Static("", id="sandbox-path")
+            with TabPane(self.tr("tab.settings"), id="settings"):
+                yield Markdown(f"# {self.tr('settings.title')}")
+                yield Static(self.tr("settings.language"), classes="hint")
+                yield Select(
+                    [(self.tr("language.auto"), "auto")]
+                    + [
+                        (self.tr(f"language.{language}"), language)
+                        for language in SUPPORTED_LANGUAGES
+                    ],
+                    value=self.settings.language,
+                    allow_blank=False,
+                    id="settings-language",
+                )
+                yield Button(self.tr("settings.save"), id="save-settings", variant="primary")
+                yield Static(
+                    self.tr("settings.current_file", path=default_config_path()),
+                    classes="hint",
+                )
+                yield Static(self.tr("settings.restart_hint"), classes="hint")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -242,9 +218,9 @@ class GCCApp(App[None]):
         if requested_theme in self.available_themes:
             self.theme = requested_theme
         custom_actions = {
-            "refresh": ("refresh_repository", "Aggiorna"),
-            "quit": ("quit", "Esci"),
-            "help": ("show_help", "Aiuto"),
+            "refresh": ("refresh_repository", self.tr("binding.refresh")),
+            "quit": ("quit", self.tr("binding.quit")),
+            "help": ("show_help", self.tr("binding.help")),
         }
         for name, key in self.settings.shortcuts.items():
             if name in custom_actions and key:
@@ -252,13 +228,28 @@ class GCCApp(App[None]):
                 self.bind(key, action, description=description)
 
         command_table = self.query_one("#command-table", DataTable)
-        command_table.add_columns("Comando", "Categoria", "Rischio")
+        command_table.add_columns(
+            self.tr("table.command"),
+            self.tr("table.category"),
+            self.tr("table.risk"),
+        )
         command_table.cursor_type = "row"
         branch_table = self.query_one("#branch-table", DataTable)
-        branch_table.add_columns("", "Branch", "Tipo", "Tracking", "Commit")
+        branch_table.add_columns(
+            "",
+            self.tr("table.branch"),
+            self.tr("table.type"),
+            self.tr("table.tracking"),
+            self.tr("table.commit"),
+        )
         branch_table.cursor_type = "row"
         reflog_table = self.query_one("#reflog-table", DataTable)
-        reflog_table.add_columns("Selettore", "Hash", "Azione", "Messaggio")
+        reflog_table.add_columns(
+            self.tr("table.selector"),
+            self.tr("table.hash"),
+            self.tr("table.action"),
+            self.tr("table.message"),
+        )
         reflog_table.cursor_type = "row"
         self._refresh_command_table()
         self.action_refresh_repository()
@@ -266,9 +257,8 @@ class GCCApp(App[None]):
 
     def action_show_help(self) -> None:
         self.notify(
-            "Naviga con Tab/Shift+Tab. Premi Invio sulle tabelle. "
-            "R aggiorna il repository, Q esce.",
-            title="Aiuto contestuale",
+            self.tr("help.body"),
+            title=self.tr("help.title"),
             timeout=8,
         )
 
@@ -303,33 +293,36 @@ class GCCApp(App[None]):
         reflog: list[Any],
         diff: str,
     ) -> None:
-        remote_text = " | ".join(snapshot.remotes) or "nessun remote"
+        remote_text = " | ".join(snapshot.remotes) or self.tr("repo.no_remote")
+        sync_label = self._sync_label(snapshot)
         self.query_one("#repo-strip", Static).update(
             f"[bold]{escape(snapshot.name)}[/bold]  {escape(str(snapshot.path))}\n"
-            f"Branch: [cyan]{escape(snapshot.branch)}[/cyan]  |  "
-            f"Sync: {escape(snapshot.sync_label)}  |  Remote: {escape(remote_text)}"
+            f"{self.tr('repo.branch')}: [cyan]{escape(snapshot.branch)}[/cyan]  |  "
+            f"{self.tr('repo.sync')}: {escape(sync_label)}  |  "
+            f"{self.tr('repo.remote')}: {escape(remote_text)}"
         )
-        last_commit = "Nessun commit"
+        last_commit = self.tr("repo.no_commit")
         if snapshot.last_commit_at is not None:
             last_commit = (
                 f"`{snapshot.last_commit_hash}` {snapshot.last_commit_message}\n"
-                f"Autore: **{snapshot.last_commit_author}** - "
+                f"{self.tr('repo.author')}: **{snapshot.last_commit_author}** - "
                 f"{self._elapsed(snapshot.last_commit_at)}"
             )
         dashboard = (
-            "# Stato repository\n\n"
-            f"**Percorso:** `{snapshot.path}`\n\n"
-            f"**Branch attivo:** `{snapshot.branch}`  \n"
-            f"**Upstream:** `{snapshot.upstream or 'non configurato'}`  \n"
-            f"**Sincronizzazione:** {snapshot.sync_label}\n\n"
-            "## Worktree\n\n"
-            f"- File modificati: **{snapshot.modified_count}**\n"
-            f"- File staged: **{snapshot.staged_count}**\n"
-            f"- File non tracciati: **{snapshot.untracked_count}**\n"
-            f"- Commit avanti: **{snapshot.ahead}**\n"
-            f"- Commit indietro: **{snapshot.behind}**\n\n"
-            f"## Ultimo commit\n\n{last_commit}\n\n"
-            f"## Remote\n\n{remote_text}"
+            f"# {self.tr('dashboard.title')}\n\n"
+            f"**{self.tr('dashboard.path')}:** `{snapshot.path}`\n\n"
+            f"**{self.tr('dashboard.active_branch')}:** `{snapshot.branch}`\n"
+            f"**{self.tr('dashboard.upstream')}:** "
+            f"`{snapshot.upstream or self.tr('repo.not_configured')}`\n"
+            f"**{self.tr('dashboard.synchronization')}:** {sync_label}\n\n"
+            f"## {self.tr('dashboard.worktree')}\n\n"
+            f"- {self.tr('dashboard.modified_files', count=snapshot.modified_count)}\n"
+            f"- {self.tr('dashboard.staged_files', count=snapshot.staged_count)}\n"
+            f"- {self.tr('dashboard.untracked_files', count=snapshot.untracked_count)}\n"
+            f"- {self.tr('dashboard.commits_ahead', count=snapshot.ahead)}\n"
+            f"- {self.tr('dashboard.commits_behind', count=snapshot.behind)}\n\n"
+            f"## {self.tr('dashboard.last_commit')}\n\n{last_commit}\n\n"
+            f"## {self.tr('dashboard.remotes')}\n\n{remote_text}"
         )
         self.query_one("#dashboard-content", Markdown).update(dashboard)
 
@@ -343,7 +336,7 @@ class GCCApp(App[None]):
             branch_table.add_row(
                 "*" if branch.active else "",
                 branch.name,
-                "remoto" if branch.remote else "locale",
+                self.tr("branch.type_remote" if branch.remote else "branch.type_local"),
                 branch.tracking or "-",
                 branch.commit,
                 key=branch.name,
@@ -362,19 +355,31 @@ class GCCApp(App[None]):
 
         self._write_log("#diff-log", diff)
 
-    @staticmethod
-    def _elapsed(value: datetime) -> str:
+    def _sync_label(self, snapshot: RepositorySnapshot) -> str:
+        if snapshot.upstream is None:
+            return self.tr("sync.no_upstream")
+        if snapshot.ahead == 0 and snapshot.behind == 0:
+            return self.tr("sync.synchronized")
+        return self.tr("sync.diverged", ahead=snapshot.ahead, behind=snapshot.behind)
+
+    def _elapsed(self, value: datetime) -> str:
         now = datetime.now(UTC)
         if value.tzinfo is None:
             value = value.replace(tzinfo=UTC)
         seconds = max(0, int((now - value.astimezone(UTC)).total_seconds()))
         if seconds < 60:
-            return "meno di un minuto fa"
+            return self.tr("time.less_than_minute")
         if seconds < 3600:
-            return f"{seconds // 60} minuti fa"
+            return self.tr("time.minutes", count=seconds // 60)
         if seconds < 86_400:
-            return f"{seconds // 3600} ore fa"
-        return f"{seconds // 86_400} giorni fa"
+            return self.tr("time.hours", count=seconds // 3600)
+        return self.tr("time.days", count=seconds // 86_400)
+
+    def _category_label(self, category: str) -> str:
+        return self.tr(f"category.{category.casefold()}")
+
+    def _risk_label(self, risk: RiskLevel) -> str:
+        return self.tr(f"risk.{risk.value}")
 
     def _refresh_command_table(self) -> None:
         query = self.query_one("#command-search", Input).value
@@ -392,8 +397,8 @@ class GCCApp(App[None]):
         for command in commands:
             table.add_row(
                 command.name,
-                command.category,
-                command.risk.value.upper(),
+                self._category_label(command.category),
+                self._risk_label(command.risk),
                 key=command.id,
             )
         if commands:
@@ -410,37 +415,41 @@ class GCCApp(App[None]):
         self._show_command(self.catalog.get(str(event.row_key.value)))
 
     def _show_command(self, command: CommandGuide) -> None:
-        errors = "\n".join(f"- {item}" for item in command.common_errors) or "- Nessuno noto"
-        rollback = command.rollback or "Non necessario: il comando non modifica il repository."
+        errors = (
+            "\n".join(f"- {item}" for item in command.common_errors)
+            or f"- {self.tr('command.no_errors')}"
+        )
+        rollback = command.rollback or self.tr("command.no_rollback")
         alternative = (
-            f"\n\n## Alternativa consigliata\n\n{command.recommended_alternative}"
+            f"\n\n## {self.tr('command.alternative')}\n\n"
+            f"{command.recommended_alternative}"
             if command.recommended_alternative
             else ""
         )
         content = f"""# {command.name}
 
-**Sintassi:** `{command.syntax}`
-**Categoria:** {command.category}
-**Rischio:** **{command.risk.value.upper()}**
+**{self.tr("command.syntax")}:** `{command.syntax}`
+**{self.tr("command.category")}:** {self._category_label(command.category)}
+**{self.tr("command.risk")}:** **{self._risk_label(command.risk)}**
 
-## Descrizione
+## {self.tr("command.description")}
 
 {command.description}
 
-**Quando usarlo:** {command.use_when}
-**Quando NON usarlo:** {command.avoid_when}
+**{self.tr("command.use_when")}** {command.use_when}
+**{self.tr("command.avoid_when")}** {command.avoid_when}
 
-**Esempio:** `{command.example}`
+**{self.tr("command.example")}:** `{command.example}`
 
-## Errori comuni
+## {self.tr("command.common_errors")}
 
 {errors}
 
-## Conseguenze e rollback
+## {self.tr("command.consequences")}
 
 {command.consequences}
 
-**Rollback:** {rollback}{alternative}
+**{self.tr("command.rollback")}:** {rollback}{alternative}
 """
         self.query_one("#command-details", Markdown).update(content)
 
@@ -449,24 +458,25 @@ class GCCApp(App[None]):
         goal = str(self.query_one("#goal-select", Select).value)
         value = self.query_one("#goal-value", Input).value
         try:
-            self._set_plan(build_plan(goal, value=value))
+            self._set_plan(build_plan(goal, value=value, translator=self.tr))
         except ValueError as error:
             self.notify(str(error), severity="warning")
 
     def _set_plan(self, plan: CommandPlan) -> None:
         self.current_plan = plan
         commands = "\n".join(f"1. `{command}`" for command in plan.display_commands)
-        rollback = plan.rollback or "Non necessario."
+        rollback = plan.rollback or self.tr("plan.no_rollback")
         self.query_one("#plan-preview", Markdown).update(
             f"# {plan.title}\n\n{plan.explanation}\n\n"
-            f"**Rischio:** {plan.risk.value.upper()}\n\n"
-            f"## Comandi\n\n{commands}\n\n**Rollback:** {rollback}"
+            f"**{self.tr('plan.risk')}:** {self._risk_label(plan.risk)}\n\n"
+            f"## {self.tr('plan.commands')}\n\n{commands}\n\n"
+            f"**{self.tr('plan.rollback')}:** {rollback}"
         )
 
     @on(Button.Pressed, "#execute-plan")
     def execute_current_plan(self) -> None:
         if self.current_plan is None:
-            self.notify("Crea prima un piano.", severity="warning")
+            self.notify(self.tr("error.plan_first"), severity="warning")
             return
         self._request_execution(self.current_plan)
 
@@ -474,7 +484,7 @@ class GCCApp(App[None]):
     def create_branch(self) -> None:
         name = self.query_one("#branch-name", Input).value
         try:
-            plan = build_plan("branch", value=name)
+            plan = build_plan("branch", value=name, translator=self.tr)
         except ValueError as error:
             self.notify(str(error), severity="warning")
             return
@@ -485,14 +495,14 @@ class GCCApp(App[None]):
     def checkout_branch(self) -> None:
         name = self.query_one("#branch-name", Input).value.strip()
         if not name:
-            self.notify("Inserisci il nome del branch.", severity="warning")
+            self.notify(self.tr("error.branch_name"), severity="warning")
             return
         plan = CommandPlan(
-            title=f"Checkout {name}",
-            explanation="Passa al branch esistente indicato.",
+            title=self.tr("planner.checkout.title", name=name),
+            explanation=self.tr("planner.checkout.explanation"),
             commands=[["switch", name]],
             risk=RiskLevel.LOW,
-            rollback="git switch - torna al branch precedente.",
+            rollback=self.tr("planner.checkout.rollback"),
         )
         self._request_execution(plan)
 
@@ -500,7 +510,7 @@ class GCCApp(App[None]):
     def delete_branch(self) -> None:
         name = self.query_one("#branch-name", Input).value
         try:
-            self._request_execution(branch_delete_plan(name))
+            self._request_execution(branch_delete_plan(name, translator=self.tr))
         except ValueError as error:
             self.notify(str(error), severity="warning")
 
@@ -531,8 +541,8 @@ class GCCApp(App[None]):
     @on(Select.Changed, "#lesson-select")
     def lesson_changed(self, event: Select.Changed) -> None:
         value = str(event.value)
-        if value in LESSONS:
-            self.query_one("#lesson-content", Markdown).update(LESSONS[value])
+        if value in {"beginner", "intermediate", "advanced", "expert"}:
+            self.query_one("#lesson-content", Markdown).update(self.tr(f"lesson.{value}"))
 
     @on(Button.Pressed, "#create-sandbox")
     def create_sandbox(self) -> None:
@@ -547,12 +557,24 @@ class GCCApp(App[None]):
             return
         self.call_from_thread(
             self.query_one("#sandbox-path", Static).update,
-            f"Sandbox pronta: [bold]{escape(str(path))}[/bold]",
+            self.tr("sandbox.ready", path=escape(str(path))),
         )
+
+    @on(Button.Pressed, "#save-settings")
+    def save_preferences(self) -> None:
+        language = str(self.query_one("#settings-language", Select).value)
+        self.settings = AppSettings.model_validate(
+            {**self.settings.model_dump(), "language": language}
+        )
+        save_settings(self.settings)
+        self.notify(self.tr("settings.saved"), title=self.tr("tab.settings"))
 
     def _request_execution(self, plan: CommandPlan) -> None:
         if plan.risk in {RiskLevel.HIGH, RiskLevel.CRITICAL}:
-            self.push_screen(ConfirmScreen(plan), lambda answer: self._confirmed(plan, answer))
+            self.push_screen(
+                ConfirmScreen(plan, self.tr),
+                lambda answer: self._confirmed(plan, answer),
+            )
         else:
             self._execute_plan(plan, False, "")
 
@@ -576,7 +598,7 @@ class GCCApp(App[None]):
 
     def _show_operation_error(self, message: str) -> None:
         self.query_one("#operation-output", Static).update(
-            f"[bold red]Operazione bloccata[/bold red]\n{escape(message)}"
+            f"[bold red]{self.tr('error.operation_blocked')}[/bold red]\n{escape(message)}"
         )
         self.notify(message, severity="error")
 
@@ -584,7 +606,7 @@ class GCCApp(App[None]):
         lines: list[str] = []
         succeeded = True
         for result in results:
-            marker = "OK" if result.succeeded else "ERRORE"
+            marker = self.tr("result.ok" if result.succeeded else "result.error")
             lines.append(f"[{marker}] {result.command}")
             if result.stdout:
                 lines.append(result.stdout)
@@ -593,7 +615,7 @@ class GCCApp(App[None]):
             succeeded = succeeded and result.succeeded
         self.query_one("#operation-output", Static).update(escape("\n".join(lines)))
         self.notify(
-            "Operazione completata." if succeeded else "Il comando Git ha restituito un errore.",
+            self.tr("result.completed" if succeeded else "result.failed"),
             severity="information" if succeeded else "error",
         )
         self.action_refresh_repository()

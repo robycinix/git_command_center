@@ -1,0 +1,232 @@
+language.auto: Automático (sistema)
+language.en: Inglés
+language.de: Alemán
+language.es: Español
+language.fr: Francés
+language.pt: Portugués
+language.it: Italiano
+app.subtitle: Git visible, guiado y seguro
+binding.quit: Salir
+binding.refresh: Actualizar
+binding.help: Ayuda
+loading.repository: Cargando repositorio...
+tab.dashboard: Panel
+tab.commands: Comandos
+tab.wizard: Asistente
+tab.history: Historial
+tab.branches: Ramas
+tab.diff: Diferencias
+tab.recovery: Recuperación
+tab.learn: Aprender
+tab.settings: Configuración
+filter.search: Búsqueda en vivo...
+filter.all_categories: Todas las categorías
+filter.any_risk: Cualquier riesgo
+filter.up_to_low: Hasta riesgo bajo
+filter.up_to_medium: Hasta riesgo medio
+filter.safe_only: Solo operaciones seguras
+wizard.hint: Elige tu objetivo. GCC siempre muestra los comandos antes de ejecutarlos.
+wizard.value_placeholder: Mensaje, nombre de rama o ruta del archivo
+wizard.build: Crear plan
+wizard.execute: Ejecutar plan
+wizard.no_plan: No se ha creado ningún plan.
+history.hint: Grafo de todas las ramas con hashes, fechas, autores, referencias y mensajes.
+branch.name_placeholder: Nombre de rama
+branch.create: Crear
+branch.checkout: Cambiar
+branch.delete: Eliminar
+diff.path_placeholder: Ruta opcional
+diff.staged: Preparado
+diff.refresh: Actualizar diferencias
+recovery.hint: El reflog local es de solo lectura. Verifica un selector antes de recuperar.
+learn.beginner: Principiante
+learn.intermediate: Intermedio
+learn.advanced: Avanzado
+learn.expert: Experto
+learn.create_sandbox: Crear entorno seguro
+settings.title: Idioma y preferencias
+settings.language: Idioma de la interfaz
+settings.save: Guardar preferencias
+settings.current_file: "Archivo de configuración: `{path}`"
+settings.restart_hint: Los cambios de idioma se aplican al volver a iniciar GCC.
+settings.saved: Preferencias guardadas. Reinicia GCC para aplicar el idioma.
+table.command: Comando
+table.category: Categoría
+table.risk: Riesgo
+table.branch: Rama
+table.type: Tipo
+table.tracking: Seguimiento
+table.commit: Commit
+table.selector: Selector
+table.hash: Hash
+table.action: Acción
+table.message: Mensaje
+help.title: Ayuda contextual
+help.body: Navega con Tab/Mayús+Tab. Pulsa Intro en las tablas. R actualiza y Q sale.
+repo.no_remote: sin remoto
+repo.branch: Rama
+repo.sync: Sincronización
+repo.remote: Remoto
+repo.no_commit: Aún no hay commits
+repo.author: Autor
+repo.not_configured: no configurado
+dashboard.title: Estado del repositorio
+dashboard.path: Ruta
+dashboard.active_branch: Rama activa
+dashboard.upstream: Upstream
+dashboard.synchronization: Sincronización
+dashboard.worktree: Árbol de trabajo
+dashboard.modified_files: "Archivos modificados: **{count}**"
+dashboard.staged_files: "Archivos preparados: **{count}**"
+dashboard.untracked_files: "Archivos sin seguimiento: **{count}**"
+dashboard.commits_ahead: "Commits por delante: **{count}**"
+dashboard.commits_behind: "Commits por detrás: **{count}**"
+dashboard.last_commit: Último commit
+dashboard.remotes: Remotos
+sync.no_upstream: Sin upstream
+sync.synchronized: Sincronizado
+sync.diverged: "{ahead} delante / {behind} detrás"
+branch.type_remote: remota
+branch.type_local: local
+time.less_than_minute: hace menos de un minuto
+time.minutes: "hace {count} minutos"
+time.hours: "hace {count} horas"
+time.days: "hace {count} días"
+command.syntax: Sintaxis
+command.category: Categoría
+command.risk: Riesgo
+command.description: Descripción
+command.use_when: "Cuándo usarlo:"
+command.avoid_when: "Cuándo NO usarlo:"
+command.example: Ejemplo
+command.common_errors: Errores frecuentes
+command.consequences: Consecuencias y reversión
+command.rollback: Reversión
+command.alternative: Alternativa recomendada
+command.no_errors: Sin errores conocidos
+command.no_rollback: "No es necesario: este comando no modifica el repositorio."
+plan.risk: Riesgo
+plan.commands: Comandos
+plan.rollback: Reversión
+plan.no_rollback: No es necesario.
+error.plan_first: Crea primero un plan.
+error.branch_name: Introduce un nombre de rama.
+error.operation_blocked: Operación bloqueada
+confirm.title: "Confirmar: {title}"
+confirm.risk: Riesgo
+confirm.critical_prompt: Escribe "CONFERMO" como segunda confirmación.
+confirm.cancel: Cancelar
+confirm.execute: Ejecutar
+sandbox.ready: "Entorno listo: [bold]{path}[/bold]"
+result.ok: OK
+result.error: ERROR
+result.completed: Operación completada.
+result.failed: Git devolvió un error.
+category.repository: Repositorio
+category.commit: Commit
+category.branch: Rama
+category.merge: Fusión
+category.rebase: Rebase
+category.remote: Remoto
+category.recovery: Recuperación
+category.stash: Stash
+category.tag: Etiqueta
+category.log: Historial
+category.workflow: Flujo de trabajo
+category.github: GitHub
+risk.safe: SEGURO
+risk.low: BAJO
+risk.medium: MEDIO
+risk.high: ALTO
+risk.critical: CRÍTICO
+goal.save: Guardar cambios en un commit
+goal.push: Enviar commits al remoto
+goal.pull: Descargar actualizaciones de forma segura
+goal.branch: Crear y cambiar a una rama
+goal.undo_commit: Deshacer el último commit conservando los cambios
+goal.recover_file: Descartar cambios locales de un archivo
+goal.conflicts: Revisar conflictos sin resolver
+planner.default_commit_message: Describe tus cambios
+planner.save.title: Guardar todos los cambios actuales
+planner.save.explanation: Preparar archivos seguidos y nuevos, y crear un commit.
+planner.save.rollback: git reset --soft HEAD~1 elimina el commit y conserva los cambios.
+planner.push.title: Enviar commits locales
+planner.push.explanation: Publicar la rama activa en su upstream configurado.
+planner.push.rollback: Revierte con otro commit en las ramas compartidas.
+planner.pull.title: Descargar actualizaciones remotas
+planner.pull.explanation: Solo avance rápido; no crea commits de fusión inesperados.
+planner.pull.rollback: Usa reflog para encontrar el HEAD anterior si es necesario.
+planner.branch.required: Introduce el nombre de la nueva rama.
+planner.branch.title: "Crear rama {name}"
+planner.branch.explanation: Crear una rama nueva en HEAD y cambiar a ella.
+planner.branch.rollback: "Cambia de rama y ejecuta git branch -d {name}."
+planner.undo.title: Deshacer el último commit local
+planner.undo.explanation: Retroceder HEAD un commit manteniendo todos los cambios preparados.
+planner.undo.rollback: El commit eliminado sigue disponible en reflog.
+planner.recover.required: Introduce la ruta relativa al repositorio.
+planner.recover.title: "Descartar cambios en {path}"
+planner.recover.explanation: Restaurar el archivo de trabajo desde el índice.
+planner.recover.rollback: Los cambios sin commit podrían no ser recuperables.
+planner.conflicts.title: Enumerar conflictos sin resolver
+planner.conflicts.explanation: Mostrar solo archivos con conflictos; no modifica nada.
+planner.unknown_goal: "Objetivo desconocido: {goal}"
+planner.delete.required: Introduce un nombre de rama.
+planner.delete.title: "Eliminar rama {name}"
+planner.delete.force_explanation: Forzar la eliminación aunque la rama no esté fusionada.
+planner.delete.explanation: Eliminar la rama local solo si ya está fusionada.
+planner.delete.rollback: Busca la punta anterior en reflog y vuelve a crear la rama.
+planner.checkout.title: "Cambiar a {name}"
+planner.checkout.explanation: Cambiar a la rama existente seleccionada.
+planner.checkout.rollback: git switch - vuelve a la rama anterior.
+lesson.beginner: |-
+  # Principiante: las tres áreas de Git
+
+  Git guarda el trabajo en tres áreas: **árbol de trabajo**, **área de preparación** y **repositorio**.
+
+  1. Edita un archivo.
+  2. Selecciónalo con `git add`.
+  3. Crea una instantánea con `git commit`.
+
+  ## Pregunta
+
+  ¿`git add` publica el archivo? **No**: solo prepara el siguiente commit local.
+
+  ## Ejercicio
+
+  Edita `README.md` en el entorno seguro, revisa `git status`, añade el archivo y crea un commit.
+lesson.intermediate: |-
+  # Intermedio: ramas e integración
+
+  Una rama es una referencia móvil a un commit. Mantén las ramas pequeñas y enfocadas.
+
+  ## Pregunta
+
+  ¿Dónde debes estar antes de `git merge feature`? En la rama que debe recibir el trabajo.
+
+  ## Ejercicio
+
+  Crea `feature/demo`, añade un commit, vuelve a `main` y fusiona la rama.
+lesson.advanced: |-
+  # Avanzado: rebase y reflog
+
+  Rebase reescribe commits. Úsalo en trabajo local, no en historial compartido. Reflog registra movimientos locales y suele encontrar commits perdidos.
+
+  ## Pregunta
+
+  ¿Por qué cambian los hashes tras rebase? Cambia el padre y por tanto el contenido del commit.
+
+  ## Ejercicio
+
+  Crea dos ramas divergentes, ejecuta rebase y compara `git log --graph --all`.
+lesson.expert: |-
+  # Experto: colaboración y recuperación
+
+  Antes de cambiar historial publicado, identifica propietarios, ramas protegidas y estrategia de reversión. Usa `--force-with-lease` solo en ramas personales acordadas.
+
+  ## Pregunta
+
+  ¿Qué protege `--force-with-lease`? Evita sobrescribir una referencia remota que cambió desde tu última observación.
+
+  ## Ejercicio
+
+  Simula un reset, encuentra el commit anterior en reflog y crea una rama que lo apunte.

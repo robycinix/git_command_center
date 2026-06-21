@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, Field, ValidationError
@@ -15,6 +15,7 @@ class AISettings(BaseModel):
 
 
 class AppSettings(BaseModel):
+    language: Literal["auto", "en", "de", "es", "fr", "pt", "it"] = "auto"
     theme: str = "dark"
     refresh_interval: float = Field(default=3.0, ge=1.0, le=60.0)
     history_limit: int = Field(default=300, ge=20, le=10_000)

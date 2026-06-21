@@ -6,15 +6,27 @@ import yaml
 from pydantic import TypeAdapter
 
 from git_command_center.core.models import CommandGuide, RiskLevel
+from git_command_center.i18n.translator import Language, resolve_language
 
 
 class CommandCatalog:
-    def __init__(self, commands: list[CommandGuide] | None = None) -> None:
-        self._commands = commands if commands is not None else self._load_builtin()
+    def __init__(
+        self,
+        commands: list[CommandGuide] | None = None,
+        *,
+        language: str = "en",
+    ) -> None:
+        self.language = resolve_language(language)
+        self._commands = (
+            commands if commands is not None else self._load_builtin(self.language)
+        )
 
     @staticmethod
-    def _load_builtin() -> list[CommandGuide]:
-        resource = files("git_command_center.data").joinpath("commands.yaml")
+    def _load_builtin(language: Language) -> list[CommandGuide]:
+        localized = files("git_command_center.data").joinpath(f"commands.{language}.yaml")
+        resource = localized if localized.is_file() else files("git_command_center.data").joinpath(
+            "commands.en.yaml"
+        )
         raw = yaml.safe_load(resource.read_text(encoding="utf-8"))
         return TypeAdapter(list[CommandGuide]).validate_python(raw)
 

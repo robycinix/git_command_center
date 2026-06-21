@@ -1,95 +1,106 @@
 from __future__ import annotations
 
 from git_command_center.core.models import CommandPlan, RiskLevel
+from git_command_center.i18n import Translator
 
-GOALS: dict[str, str] = {
-    "save": "Save changes in a commit",
-    "push": "Send commits to the remote",
-    "pull": "Download remote updates safely",
-    "branch": "Create and switch to a branch",
-    "undo_commit": "Undo the latest commit but keep its changes",
-    "recover_file": "Discard local edits in one file",
-    "conflicts": "Inspect unresolved conflicts",
-}
+GOALS: tuple[str, ...] = (
+    "save",
+    "push",
+    "pull",
+    "branch",
+    "undo_commit",
+    "recover_file",
+    "conflicts",
+)
 
 
-def build_plan(goal: str, *, value: str = "") -> CommandPlan:
+def build_plan(
+    goal: str,
+    *,
+    value: str = "",
+    translator: Translator | None = None,
+) -> CommandPlan:
+    tr = translator or Translator("en")
     value = value.strip()
     if goal == "save":
-        message = value or "Describe your changes"
+        message = value or tr("planner.default_commit_message")
         return CommandPlan(
-            title="Save all current changes",
-            explanation="Stage tracked and untracked files, then create one commit.",
+            title=tr("planner.save.title"),
+            explanation=tr("planner.save.explanation"),
             commands=[["add", "--all"], ["commit", "-m", message]],
             risk=RiskLevel.LOW,
-            rollback="git reset --soft HEAD~1 keeps the changes while removing the commit.",
+            rollback=tr("planner.save.rollback"),
         )
     if goal == "push":
         return CommandPlan(
-            title="Send local commits",
-            explanation="Push the active branch to its configured upstream.",
+            title=tr("planner.push.title"),
+            explanation=tr("planner.push.explanation"),
             commands=[["push"]],
             risk=RiskLevel.MEDIUM,
-            rollback="Published commits require a follow-up revert in shared branches.",
+            rollback=tr("planner.push.rollback"),
         )
     if goal == "pull":
         return CommandPlan(
-            title="Download remote updates",
-            explanation="Fetch and fast-forward only; no surprise merge commit is created.",
+            title=tr("planner.pull.title"),
+            explanation=tr("planner.pull.explanation"),
             commands=[["pull", "--ff-only"]],
             risk=RiskLevel.LOW,
-            rollback="Use reflog to locate the previous HEAD if needed.",
+            rollback=tr("planner.pull.rollback"),
         )
     if goal == "branch":
         if not value:
-            raise ValueError("Enter the new branch name.")
+            raise ValueError(tr("planner.branch.required"))
         return CommandPlan(
-            title=f"Create branch {value}",
-            explanation="Create a new branch at HEAD and switch to it.",
+            title=tr("planner.branch.title", name=value),
+            explanation=tr("planner.branch.explanation"),
             commands=[["switch", "-c", value]],
             risk=RiskLevel.LOW,
-            rollback=f"Switch away, then run git branch -d {value}.",
+            rollback=tr("planner.branch.rollback", name=value),
         )
     if goal == "undo_commit":
         return CommandPlan(
-            title="Undo the latest local commit",
-            explanation="Move HEAD back once while leaving every change staged.",
+            title=tr("planner.undo.title"),
+            explanation=tr("planner.undo.explanation"),
             commands=[["reset", "--soft", "HEAD~1"]],
             risk=RiskLevel.MEDIUM,
-            rollback="The removed commit remains available in reflog.",
+            rollback=tr("planner.undo.rollback"),
         )
     if goal == "recover_file":
         if not value:
-            raise ValueError("Enter the repository-relative file path.")
+            raise ValueError(tr("planner.recover.required"))
         return CommandPlan(
-            title=f"Discard edits in {value}",
-            explanation="Restore the working-tree file from the index.",
+            title=tr("planner.recover.title", path=value),
+            explanation=tr("planner.recover.explanation"),
             commands=[["restore", "--", value]],
             risk=RiskLevel.HIGH,
-            rollback="Uncommitted edits may not be recoverable.",
+            rollback=tr("planner.recover.rollback"),
         )
     if goal == "conflicts":
         return CommandPlan(
-            title="List unresolved conflicts",
-            explanation="Show only files with unresolved merge entries; it changes nothing.",
+            title=tr("planner.conflicts.title"),
+            explanation=tr("planner.conflicts.explanation"),
             commands=[["diff", "--name-only", "--diff-filter=U"]],
             risk=RiskLevel.SAFE,
         )
-    raise ValueError(f"Unknown goal: {goal}")
+    raise ValueError(tr("planner.unknown_goal", goal=goal))
 
 
-def branch_delete_plan(name: str, *, force: bool = False) -> CommandPlan:
+def branch_delete_plan(
+    name: str,
+    *,
+    force: bool = False,
+    translator: Translator | None = None,
+) -> CommandPlan:
+    tr = translator or Translator("en")
     name = name.strip()
     if not name:
-        raise ValueError("Enter a branch name.")
+        raise ValueError(tr("planner.delete.required"))
     return CommandPlan(
-        title=f"Delete branch {name}",
-        explanation=(
-            "Force-delete the local branch even when it is not merged."
-            if force
-            else "Delete the local branch only if it has already been merged."
+        title=tr("planner.delete.title", name=name),
+        explanation=tr(
+            "planner.delete.force_explanation" if force else "planner.delete.explanation"
         ),
         commands=[["branch", "-D" if force else "-d", name]],
         risk=RiskLevel.CRITICAL if force else RiskLevel.HIGH,
-        rollback="Find the previous branch tip in reflog and recreate the branch there.",
+        rollback=tr("planner.delete.rollback"),
     )

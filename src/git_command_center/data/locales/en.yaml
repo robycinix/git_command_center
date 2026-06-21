@@ -1,0 +1,232 @@
+language.auto: Automatic (system)
+language.en: English
+language.de: German
+language.es: Spanish
+language.fr: French
+language.pt: Portuguese
+language.it: Italian
+app.subtitle: Git made visible, guided and safe
+binding.quit: Quit
+binding.refresh: Refresh
+binding.help: Help
+loading.repository: Loading repository...
+tab.dashboard: Dashboard
+tab.commands: Commands
+tab.wizard: Wizard
+tab.history: History
+tab.branches: Branches
+tab.diff: Diff
+tab.recovery: Recovery
+tab.learn: Learn
+tab.settings: Settings
+filter.search: Live search...
+filter.all_categories: All categories
+filter.any_risk: Any risk
+filter.up_to_low: Up to low risk
+filter.up_to_medium: Up to medium risk
+filter.safe_only: Safe operations only
+wizard.hint: Choose the outcome you want. GCC always shows commands before running them.
+wizard.value_placeholder: Message, branch name or file path
+wizard.build: Build plan
+wizard.execute: Execute plan
+wizard.no_plan: No plan has been created.
+history.hint: Graph of all branches with hashes, dates, authors, references and messages.
+branch.name_placeholder: Branch name
+branch.create: Create
+branch.checkout: Checkout
+branch.delete: Delete
+diff.path_placeholder: Optional path
+diff.staged: Staged
+diff.refresh: Refresh diff
+recovery.hint: The local reflog is read-only. Verify a selector before using it for recovery.
+learn.beginner: Beginner
+learn.intermediate: Intermediate
+learn.advanced: Advanced
+learn.expert: Expert
+learn.create_sandbox: Create sandbox
+settings.title: Language and preferences
+settings.language: Interface language
+settings.save: Save preferences
+settings.current_file: "Configuration file: `{path}`"
+settings.restart_hint: Language changes are applied the next time GCC starts.
+settings.saved: Preferences saved. Restart GCC to apply the language change.
+table.command: Command
+table.category: Category
+table.risk: Risk
+table.branch: Branch
+table.type: Type
+table.tracking: Tracking
+table.commit: Commit
+table.selector: Selector
+table.hash: Hash
+table.action: Action
+table.message: Message
+help.title: Contextual help
+help.body: Navigate with Tab/Shift+Tab. Press Enter on tables. R refreshes, Q quits.
+repo.no_remote: no remote
+repo.branch: Branch
+repo.sync: Sync
+repo.remote: Remote
+repo.no_commit: No commits yet
+repo.author: Author
+repo.not_configured: not configured
+dashboard.title: Repository status
+dashboard.path: Path
+dashboard.active_branch: Active branch
+dashboard.upstream: Upstream
+dashboard.synchronization: Synchronization
+dashboard.worktree: Worktree
+dashboard.modified_files: "Modified files: **{count}**"
+dashboard.staged_files: "Staged files: **{count}**"
+dashboard.untracked_files: "Untracked files: **{count}**"
+dashboard.commits_ahead: "Commits ahead: **{count}**"
+dashboard.commits_behind: "Commits behind: **{count}**"
+dashboard.last_commit: Latest commit
+dashboard.remotes: Remotes
+sync.no_upstream: No upstream
+sync.synchronized: Synchronized
+sync.diverged: "{ahead} ahead / {behind} behind"
+branch.type_remote: remote
+branch.type_local: local
+time.less_than_minute: less than a minute ago
+time.minutes: "{count} minutes ago"
+time.hours: "{count} hours ago"
+time.days: "{count} days ago"
+command.syntax: Syntax
+command.category: Category
+command.risk: Risk
+command.description: Description
+command.use_when: "When to use it:"
+command.avoid_when: "When NOT to use it:"
+command.example: Example
+command.common_errors: Common mistakes
+command.consequences: Consequences and rollback
+command.rollback: Rollback
+command.alternative: Recommended alternative
+command.no_errors: No known mistakes
+command.no_rollback: "Not required: this command does not change the repository."
+plan.risk: Risk
+plan.commands: Commands
+plan.rollback: Rollback
+plan.no_rollback: Not required.
+error.plan_first: Build a plan first.
+error.branch_name: Enter a branch name.
+error.operation_blocked: Operation blocked
+confirm.title: "Confirm: {title}"
+confirm.risk: Risk
+confirm.critical_prompt: Type "CONFERMO" for the second confirmation.
+confirm.cancel: Cancel
+confirm.execute: Execute
+sandbox.ready: "Sandbox ready: [bold]{path}[/bold]"
+result.ok: OK
+result.error: ERROR
+result.completed: Operation completed.
+result.failed: Git returned an error.
+category.repository: Repository
+category.commit: Commit
+category.branch: Branch
+category.merge: Merge
+category.rebase: Rebase
+category.remote: Remote
+category.recovery: Recovery
+category.stash: Stash
+category.tag: Tag
+category.log: Log
+category.workflow: Workflow
+category.github: GitHub
+risk.safe: SAFE
+risk.low: LOW
+risk.medium: MEDIUM
+risk.high: HIGH
+risk.critical: CRITICAL
+goal.save: Save changes in a commit
+goal.push: Send commits to the remote
+goal.pull: Download remote updates safely
+goal.branch: Create and switch to a branch
+goal.undo_commit: Undo the latest commit but keep its changes
+goal.recover_file: Discard local edits in one file
+goal.conflicts: Inspect unresolved conflicts
+planner.default_commit_message: Describe your changes
+planner.save.title: Save all current changes
+planner.save.explanation: Stage tracked and untracked files, then create one commit.
+planner.save.rollback: git reset --soft HEAD~1 keeps the changes while removing the commit.
+planner.push.title: Send local commits
+planner.push.explanation: Push the active branch to its configured upstream.
+planner.push.rollback: Published commits require a follow-up revert on shared branches.
+planner.pull.title: Download remote updates
+planner.pull.explanation: Fetch and fast-forward only; no surprise merge commit is created.
+planner.pull.rollback: Use reflog to locate the previous HEAD if needed.
+planner.branch.required: Enter the new branch name.
+planner.branch.title: "Create branch {name}"
+planner.branch.explanation: Create a new branch at HEAD and switch to it.
+planner.branch.rollback: "Switch away, then run git branch -d {name}."
+planner.undo.title: Undo the latest local commit
+planner.undo.explanation: Move HEAD back once while leaving every change staged.
+planner.undo.rollback: The removed commit remains available in reflog.
+planner.recover.required: Enter the repository-relative file path.
+planner.recover.title: "Discard edits in {path}"
+planner.recover.explanation: Restore the working-tree file from the index.
+planner.recover.rollback: Uncommitted edits may not be recoverable.
+planner.conflicts.title: List unresolved conflicts
+planner.conflicts.explanation: Show only files with unresolved merge entries; it changes nothing.
+planner.unknown_goal: "Unknown goal: {goal}"
+planner.delete.required: Enter a branch name.
+planner.delete.title: "Delete branch {name}"
+planner.delete.force_explanation: Force-delete the local branch even when it is not merged.
+planner.delete.explanation: Delete the local branch only if it has already been merged.
+planner.delete.rollback: Find the previous branch tip in reflog and recreate the branch there.
+planner.checkout.title: "Checkout {name}"
+planner.checkout.explanation: Switch to the selected existing branch.
+planner.checkout.rollback: git switch - returns to the previous branch.
+lesson.beginner: |-
+  # Beginner: Git's three areas
+
+  Git keeps work in three areas: the **worktree**, **staging area** and **repository**.
+
+  1. Edit a file in the worktree.
+  2. Select it with `git add`.
+  3. Create a snapshot with `git commit`.
+
+  ## Quiz
+
+  Does `git add` publish the file online? **No**: it only prepares the next local commit.
+
+  ## Exercise
+
+  In the sandbox, edit `README.md`, inspect `git status`, add the file and create a commit.
+lesson.intermediate: |-
+  # Intermediate: branches and integration
+
+  A branch is a movable reference to a commit. Keep branches small and focused.
+
+  ## Quiz
+
+  Where should you be before `git merge feature`? On the branch that should receive the work.
+
+  ## Exercise
+
+  Create `feature/demo`, add a commit, return to `main` and merge it.
+lesson.advanced: |-
+  # Advanced: rebase and reflog
+
+  Rebase rewrites commits. Use it on local work, not shared history. Reflog records local reference movements and often finds an apparently lost commit.
+
+  ## Quiz
+
+  Why do hashes change after rebase? The parent changes, so the commit content changes.
+
+  ## Exercise
+
+  Create two diverging branches in the sandbox, rebase and compare `git log --graph --all`.
+lesson.expert: |-
+  # Expert: collaboration and recovery
+
+  Before changing published history, identify owners, protected branches and a rollback strategy. Prefer `--force-with-lease` to `--force`, only on agreed personal branches.
+
+  ## Quiz
+
+  What does `--force-with-lease` protect? It blocks overwriting a remote reference that changed since your last local observation.
+
+  ## Exercise
+
+  Simulate a reset, find the old commit in reflog and recreate a branch pointing to it.

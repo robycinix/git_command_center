@@ -50,6 +50,7 @@ optimizes for understanding:
 | Diff & recovery | Unified diff viewer plus a chronological reflog timeline |
 | Learning | Beginner-to-expert lessons, quizzes, exercises and disposable sandboxes |
 | Safety | Risk classification, explicit confirmation and typed confirmation for critical actions |
+| Languages | Persistent automatic or manual selection across six interface languages |
 
 <p align="center">
   <img src="docs/assets/dashboard.svg" alt="Git Command Center dashboard" width="94%">
@@ -139,6 +140,18 @@ be built on their respective operating systems.
 GCC creates a validated YAML configuration file on first run under the platform
 configuration directory. Available themes include Dark, Light, Dracula, Nord
 and Gruvbox; refresh, quit and help shortcuts can be customized.
+
+**Automatic (system)** is the default. GCC uses the operating-system language
+when it is supported and falls back to English otherwise. Open the **Settings**
+tab to choose and persist English, German, Spanish, French, Portuguese or
+Italian; the saved choice is reused on every subsequent launch.
+
+Use `--language` for a temporary override without changing the saved preference:
+
+```bash
+python -m git_command_center --language it
+python -m git_command_center --language de /path/to/repository
+```
 
 ## Contributing
 

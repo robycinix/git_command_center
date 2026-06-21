@@ -1,0 +1,232 @@
+language.auto: Automatisch (System)
+language.en: Englisch
+language.de: Deutsch
+language.es: Spanisch
+language.fr: Französisch
+language.pt: Portugiesisch
+language.it: Italienisch
+app.subtitle: Git sichtbar, geführt und sicher
+binding.quit: Beenden
+binding.refresh: Aktualisieren
+binding.help: Hilfe
+loading.repository: Repository wird geladen...
+tab.dashboard: Übersicht
+tab.commands: Befehle
+tab.wizard: Assistent
+tab.history: Verlauf
+tab.branches: Branches
+tab.diff: Diff
+tab.recovery: Wiederherstellung
+tab.learn: Lernen
+tab.settings: Einstellungen
+filter.search: Live-Suche...
+filter.all_categories: Alle Kategorien
+filter.any_risk: Jedes Risiko
+filter.up_to_low: Bis niedriges Risiko
+filter.up_to_medium: Bis mittleres Risiko
+filter.safe_only: Nur sichere Vorgänge
+wizard.hint: Wähle dein Ziel. GCC zeigt Befehle immer vor der Ausführung an.
+wizard.value_placeholder: Nachricht, Branchname oder Dateipfad
+wizard.build: Plan erstellen
+wizard.execute: Plan ausführen
+wizard.no_plan: Noch kein Plan erstellt.
+history.hint: Graph aller Branches mit Hashes, Daten, Autoren, Referenzen und Nachrichten.
+branch.name_placeholder: Branchname
+branch.create: Erstellen
+branch.checkout: Wechseln
+branch.delete: Löschen
+diff.path_placeholder: Optionaler Pfad
+diff.staged: Staged
+diff.refresh: Diff aktualisieren
+recovery.hint: Der lokale Reflog ist schreibgeschützt. Prüfe einen Selektor vor der Wiederherstellung.
+learn.beginner: Anfänger
+learn.intermediate: Fortgeschritten
+learn.advanced: Erweitert
+learn.expert: Experte
+learn.create_sandbox: Sandbox erstellen
+settings.title: Sprache und Einstellungen
+settings.language: Sprache der Oberfläche
+settings.save: Einstellungen speichern
+settings.current_file: "Konfigurationsdatei: `{path}`"
+settings.restart_hint: Sprachänderungen gelten beim nächsten Start von GCC.
+settings.saved: Einstellungen gespeichert. Starte GCC neu, um die Sprache zu ändern.
+table.command: Befehl
+table.category: Kategorie
+table.risk: Risiko
+table.branch: Branch
+table.type: Typ
+table.tracking: Tracking
+table.commit: Commit
+table.selector: Selektor
+table.hash: Hash
+table.action: Aktion
+table.message: Nachricht
+help.title: Kontexthilfe
+help.body: Navigation mit Tab/Umschalt+Tab. Eingabe wählt Tabellenzeilen. R aktualisiert, Q beendet.
+repo.no_remote: kein Remote
+repo.branch: Branch
+repo.sync: Sync
+repo.remote: Remote
+repo.no_commit: Noch keine Commits
+repo.author: Autor
+repo.not_configured: nicht konfiguriert
+dashboard.title: Repository-Status
+dashboard.path: Pfad
+dashboard.active_branch: Aktiver Branch
+dashboard.upstream: Upstream
+dashboard.synchronization: Synchronisierung
+dashboard.worktree: Arbeitsverzeichnis
+dashboard.modified_files: "Geänderte Dateien: **{count}**"
+dashboard.staged_files: "Staged-Dateien: **{count}**"
+dashboard.untracked_files: "Nicht verfolgte Dateien: **{count}**"
+dashboard.commits_ahead: "Commits voraus: **{count}**"
+dashboard.commits_behind: "Commits zurück: **{count}**"
+dashboard.last_commit: Letzter Commit
+dashboard.remotes: Remotes
+sync.no_upstream: Kein Upstream
+sync.synchronized: Synchronisiert
+sync.diverged: "{ahead} voraus / {behind} zurück"
+branch.type_remote: remote
+branch.type_local: lokal
+time.less_than_minute: vor weniger als einer Minute
+time.minutes: "vor {count} Minuten"
+time.hours: "vor {count} Stunden"
+time.days: "vor {count} Tagen"
+command.syntax: Syntax
+command.category: Kategorie
+command.risk: Risiko
+command.description: Beschreibung
+command.use_when: "Verwenden, wenn:"
+command.avoid_when: "NICHT verwenden, wenn:"
+command.example: Beispiel
+command.common_errors: Häufige Fehler
+command.consequences: Folgen und Rollback
+command.rollback: Rollback
+command.alternative: Empfohlene Alternative
+command.no_errors: Keine bekannten Fehler
+command.no_rollback: "Nicht erforderlich: Dieser Befehl ändert das Repository nicht."
+plan.risk: Risiko
+plan.commands: Befehle
+plan.rollback: Rollback
+plan.no_rollback: Nicht erforderlich.
+error.plan_first: Erstelle zuerst einen Plan.
+error.branch_name: Gib einen Branchnamen ein.
+error.operation_blocked: Vorgang blockiert
+confirm.title: "Bestätigen: {title}"
+confirm.risk: Risiko
+confirm.critical_prompt: Gib "CONFERMO" als zweite Bestätigung ein.
+confirm.cancel: Abbrechen
+confirm.execute: Ausführen
+sandbox.ready: "Sandbox bereit: [bold]{path}[/bold]"
+result.ok: OK
+result.error: FEHLER
+result.completed: Vorgang abgeschlossen.
+result.failed: Git hat einen Fehler zurückgegeben.
+category.repository: Repository
+category.commit: Commit
+category.branch: Branch
+category.merge: Merge
+category.rebase: Rebase
+category.remote: Remote
+category.recovery: Wiederherstellung
+category.stash: Stash
+category.tag: Tag
+category.log: Verlauf
+category.workflow: Arbeitsablauf
+category.github: GitHub
+risk.safe: SICHER
+risk.low: NIEDRIG
+risk.medium: MITTEL
+risk.high: HOCH
+risk.critical: KRITISCH
+goal.save: Änderungen in einem Commit speichern
+goal.push: Commits zum Remote senden
+goal.pull: Remote-Aktualisierungen sicher herunterladen
+goal.branch: Branch erstellen und wechseln
+goal.undo_commit: Letzten Commit rückgängig machen, Änderungen behalten
+goal.recover_file: Lokale Änderungen einer Datei verwerfen
+goal.conflicts: Ungelöste Konflikte prüfen
+planner.default_commit_message: Beschreibe deine Änderungen
+planner.save.title: Alle aktuellen Änderungen speichern
+planner.save.explanation: Verfolgte und neue Dateien stagen, dann einen Commit erstellen.
+planner.save.rollback: git reset --soft HEAD~1 entfernt den Commit und behält die Änderungen.
+planner.push.title: Lokale Commits senden
+planner.push.explanation: Den aktiven Branch zu seinem konfigurierten Upstream pushen.
+planner.push.rollback: Veröffentlichte Commits auf gemeinsamen Branches mit Revert korrigieren.
+planner.pull.title: Remote-Aktualisierungen herunterladen
+planner.pull.explanation: Nur Fast-Forward; es entsteht kein unerwarteter Merge-Commit.
+planner.pull.rollback: Nutze Reflog, um bei Bedarf den vorherigen HEAD zu finden.
+planner.branch.required: Gib den Namen des neuen Branches ein.
+planner.branch.title: "Branch {name} erstellen"
+planner.branch.explanation: Einen neuen Branch an HEAD erstellen und dorthin wechseln.
+planner.branch.rollback: "Wechsle weg und führe git branch -d {name} aus."
+planner.undo.title: Letzten lokalen Commit rückgängig machen
+planner.undo.explanation: HEAD einen Commit zurücksetzen und alle Änderungen staged lassen.
+planner.undo.rollback: Der entfernte Commit bleibt im Reflog verfügbar.
+planner.recover.required: Gib den repository-relativen Dateipfad ein.
+planner.recover.title: "Änderungen in {path} verwerfen"
+planner.recover.explanation: Die Arbeitsdatei aus dem Index wiederherstellen.
+planner.recover.rollback: Nicht committete Änderungen sind möglicherweise nicht wiederherstellbar.
+planner.conflicts.title: Ungelöste Konflikte auflisten
+planner.conflicts.explanation: Nur Dateien mit ungelösten Merge-Einträgen anzeigen; nichts ändern.
+planner.unknown_goal: "Unbekanntes Ziel: {goal}"
+planner.delete.required: Gib einen Branchnamen ein.
+planner.delete.title: "Branch {name} löschen"
+planner.delete.force_explanation: Lokalen Branch auch dann erzwingen, wenn er nicht gemergt ist.
+planner.delete.explanation: Lokalen Branch nur löschen, wenn er bereits gemergt wurde.
+planner.delete.rollback: Vorherige Branch-Spitze im Reflog finden und den Branch neu erstellen.
+planner.checkout.title: "Zu {name} wechseln"
+planner.checkout.explanation: Zum ausgewählten vorhandenen Branch wechseln.
+planner.checkout.rollback: git switch - kehrt zum vorherigen Branch zurück.
+lesson.beginner: |-
+  # Anfänger: Die drei Bereiche von Git
+
+  Git verwaltet Arbeit in drei Bereichen: **Arbeitsverzeichnis**, **Staging Area** und **Repository**.
+
+  1. Bearbeite eine Datei.
+  2. Wähle sie mit `git add` aus.
+  3. Erstelle mit `git commit` einen Snapshot.
+
+  ## Quiz
+
+  Veröffentlicht `git add` eine Datei online? **Nein**: Es bereitet nur den nächsten lokalen Commit vor.
+
+  ## Übung
+
+  Bearbeite `README.md` in der Sandbox, prüfe `git status`, füge die Datei hinzu und committe sie.
+lesson.intermediate: |-
+  # Fortgeschritten: Branches und Integration
+
+  Ein Branch ist eine bewegliche Referenz auf einen Commit. Halte Branches klein und fokussiert.
+
+  ## Quiz
+
+  Wo musst du vor `git merge feature` sein? Auf dem Branch, der die Arbeit erhalten soll.
+
+  ## Übung
+
+  Erstelle `feature/demo`, committe eine Änderung, kehre zu `main` zurück und merge.
+lesson.advanced: |-
+  # Erweitert: Rebase und Reflog
+
+  Rebase schreibt Commits neu. Nutze es für lokale Arbeit, nicht für gemeinsame Historie. Reflog zeichnet lokale Referenzbewegungen auf und findet oft verlorene Commits.
+
+  ## Quiz
+
+  Warum ändern sich Hashes nach einem Rebase? Der Parent und damit der Commit-Inhalt ändern sich.
+
+  ## Übung
+
+  Erstelle zwei divergierende Branches, führe einen Rebase aus und vergleiche `git log --graph --all`.
+lesson.expert: |-
+  # Experte: Zusammenarbeit und Wiederherstellung
+
+  Vor Änderungen an veröffentlichter Historie müssen Eigentümer, geschützte Branches und Rollback geklärt sein. Nutze `--force-with-lease` nur auf vereinbarten persönlichen Branches.
+
+  ## Quiz
+
+  Was schützt `--force-with-lease`? Es verhindert das Überschreiben einer seit der letzten Prüfung geänderten Remote-Referenz.
+
+  ## Übung
+
+  Simuliere einen Reset, finde den alten Commit im Reflog und erstelle einen Branch darauf.
