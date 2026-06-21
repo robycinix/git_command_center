@@ -37,6 +37,11 @@ TabPane {
     margin-right: 1;
 }
 
+#goal-select {
+    width: 58;
+    max-width: 45%;
+}
+
 .toolbar Button {
     margin-right: 1;
 }
@@ -85,6 +90,20 @@ TabPane {
 .hint {
     color: $text-muted;
     margin-bottom: 1;
+}
+
+#settings-language {
+    width: 40;
+    margin-bottom: 1;
+}
+
+#setup-path {
+    margin-bottom: 1;
+}
+
+#path-status {
+    height: auto;
+    min-height: 1;
 }
 
 ConfirmScreen {

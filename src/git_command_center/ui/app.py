@@ -36,6 +36,11 @@ from git_command_center.core.models import CommandGuide, CommandPlan, Repository
 from git_command_center.git.service import GitService, RepositoryError
 from git_command_center.i18n import SUPPORTED_LANGUAGES, Translator
 from git_command_center.services.catalog import CommandCatalog
+from git_command_center.services.path_setup import (
+    PathSetupError,
+    PathSetupStatus,
+    setup_user_path,
+)
 from git_command_center.services.planner import GOALS, branch_delete_plan, build_plan
 from git_command_center.services.platform import open_directory
 from git_command_center.services.simulation import SimulationService
@@ -218,6 +223,14 @@ class GCCApp(App[None]):
                     classes="hint",
                 )
                 yield Static(self.tr("settings.restart_hint"), classes="hint")
+                yield Markdown(f"## {self.tr('settings.terminal_title')}")
+                yield Static(self.tr("settings.terminal_description"), classes="hint")
+                yield Button(
+                    self.tr("settings.terminal_button"),
+                    id="setup-path",
+                    variant="success",
+                )
+                yield Static("", id="path-status", classes="hint")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -595,6 +608,27 @@ class GCCApp(App[None]):
         )
         save_settings(self.settings)
         self.notify(self.tr("settings.saved"), title=self.tr("tab.settings"))
+
+    @on(Button.Pressed, "#setup-path")
+    def setup_terminal_command(self) -> None:
+        try:
+            result = setup_user_path()
+        except PathSetupError:
+            message = self.tr("path_setup.missing")
+            self.query_one("#path-status", Static).update(escape(message))
+            self.notify(message, severity="error")
+            return
+
+        message_key = (
+            "path_setup.already"
+            if result.status is PathSetupStatus.ALREADY_PRESENT
+            else "path_setup.added"
+        )
+        message = self.tr(message_key, path=result.scripts_directory)
+        if result.status is PathSetupStatus.ADDED:
+            message = f"{message}\n{self.tr('path_setup.reopen')}"
+        self.query_one("#path-status", Static).update(escape(message))
+        self.notify(message, title=self.tr("settings.terminal_title"))
 
     def _request_execution(self, plan: CommandPlan) -> None:
         if plan.risk in {RiskLevel.HIGH, RiskLevel.CRITICAL}:

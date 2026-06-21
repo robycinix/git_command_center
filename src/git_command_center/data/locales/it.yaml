@@ -51,8 +51,11 @@ settings.save: Salva preferenze
 settings.current_file: "File di configurazione: `{path}`"
 settings.restart_hint: Le modifiche alla lingua si applicano al prossimo avvio di GCC.
 settings.saved: Preferenze salvate. Riavvia GCC per applicare la nuova lingua.
+settings.terminal_title: Comando da terminale
+settings.terminal_description: "Aggiunge al PATH utente la cartella che contiene `gcc-tui`. Non crea una nuova variabile; dopo la configurazione apri un nuovo terminale."
+settings.terminal_button: Abilita il comando gcc-tui
 path_setup.added: "Aggiunto `{path}` al PATH utente."
-path_setup.already: "GCC e gia disponibile nel PATH (`{path}`)."
+path_setup.already: "GCC è già disponibile nel PATH (`{path}`)."
 path_setup.reopen: "Apri un nuovo terminale, poi esegui: gcc-tui"
 path_setup.missing: Esegui prima `python -m pip install -e .`; il launcher gcc-tui non e stato trovato.
 table.command: Comando

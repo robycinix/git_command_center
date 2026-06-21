@@ -9,6 +9,7 @@ from textual.widgets import Button, DataTable, Input, Select, Static
 from git_command_center.config.settings import AppSettings
 from git_command_center.git.service import GitService
 from git_command_center.i18n import Translator
+from git_command_center.services.path_setup import PathSetupResult, PathSetupStatus
 from git_command_center.ui.app import GCCApp
 
 
@@ -23,6 +24,34 @@ def test_app_mounts_and_loads_catalog(repository: Path) -> None:
             assert open_button.disabled
             app._sandbox_ready(repository)
             assert not open_button.disabled
+
+            goal_select = app.query_one("#goal-select", Select)
+            assert goal_select.styles.width.value == 58
+
+    asyncio.run(run())
+
+
+def test_path_setup_is_available_from_settings(
+    repository: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    async def run() -> None:
+        app = GCCApp(
+            GitService(repository),
+            AppSettings(language="en", refresh_interval=60),
+            Translator("en"),
+        )
+        scripts = repository / "Scripts"
+        monkeypatch.setattr(
+            "git_command_center.ui.app.setup_user_path",
+            lambda: PathSetupResult(PathSetupStatus.ALREADY_PRESENT, scripts),
+        )
+
+        async with app.run_test(size=(160, 48)) as pilot:
+            await pilot.pause()
+            assert app.query_one("#setup-path", Button)
+            app.setup_terminal_command()
+            status = app.query_one("#path-status", Static)
+            assert "already available" in str(status.render())
 
     asyncio.run(run())
 

@@ -74,11 +74,18 @@ Make the shorter command available from every terminal directory:
 python -m git_command_center --setup-path
 ```
 
+You can perform the same setup from **Settings > Terminal command > Enable the
+gcc-tui command**.
+
 Open a new terminal after the command completes, then launch GCC from anywhere:
 
 ```bash
 gcc-tui
 ```
+
+This does not create an environment variable named `GCC`. It adds the directory
+containing the `gcc-tui` launcher to the existing user `PATH`. The `gcc-tui`
+name is intentional because `gcc` commonly identifies the GNU C compiler.
 
 The setup is idempotent: running it again reports that GCC is already present
 instead of adding a duplicate `PATH` entry. On Unix-like systems GCC updates the

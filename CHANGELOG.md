@@ -7,6 +7,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- In-app user `PATH` setup with localized added/already-present feedback
+
+### Changed
+
+- Wider Wizard goal selector for long localized operation descriptions
+
 ### Planned
 
 - Side-by-side syntax-aware diff viewer

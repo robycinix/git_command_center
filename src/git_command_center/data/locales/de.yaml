@@ -51,6 +51,9 @@ settings.save: Einstellungen speichern
 settings.current_file: "Konfigurationsdatei: `{path}`"
 settings.restart_hint: Sprachänderungen gelten beim nächsten Start von GCC.
 settings.saved: Einstellungen gespeichert. Starte GCC neu, um die Sprache zu ändern.
+settings.terminal_title: Terminalbefehl
+settings.terminal_description: "Fügt den Ordner mit `gcc-tui` zum Benutzer-PATH hinzu. Es wird keine neue Variable erstellt; öffne danach ein neues Terminal."
+settings.terminal_button: Befehl gcc-tui aktivieren
 path_setup.added: "`{path}` wurde zum Benutzer-PATH hinzugefügt."
 path_setup.already: "GCC ist bereits über PATH verfügbar (`{path}`)."
 path_setup.reopen: "Öffne ein neues Terminal und führe aus: gcc-tui"
