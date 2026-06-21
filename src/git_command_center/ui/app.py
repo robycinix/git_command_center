@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from rich.markup import escape
@@ -36,6 +37,7 @@ from git_command_center.git.service import GitService, RepositoryError
 from git_command_center.i18n import SUPPORTED_LANGUAGES, Translator
 from git_command_center.services.catalog import CommandCatalog
 from git_command_center.services.planner import GOALS, branch_delete_plan, build_plan
+from git_command_center.services.platform import open_directory
 from git_command_center.services.simulation import SimulationService
 
 
@@ -99,6 +101,7 @@ class GCCApp(App[None]):
         self.sub_title = self.tr("app.subtitle")
         self.catalog = CommandCatalog(language=self.tr.language)
         self.current_plan: CommandPlan | None = None
+        self.sandbox_path: Path | None = None
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -188,6 +191,11 @@ class GCCApp(App[None]):
                         self.tr("learn.create_sandbox"),
                         id="create-sandbox",
                         variant="primary",
+                    )
+                    yield Button(
+                        self.tr("learn.open_sandbox"),
+                        id="open-sandbox",
+                        disabled=True,
                     )
                 yield Markdown(self.tr("lesson.beginner"), id="lesson-content")
                 yield Static("", id="sandbox-path")
@@ -556,9 +564,28 @@ class GCCApp(App[None]):
             self.call_from_thread(self.notify, str(error), severity="error")
             return
         self.call_from_thread(
-            self.query_one("#sandbox-path", Static).update,
-            self.tr("sandbox.ready", path=escape(str(path))),
+            self._sandbox_ready,
+            path,
         )
+
+    def _sandbox_ready(self, path: Path) -> None:
+        self.sandbox_path = path
+        self.query_one("#sandbox-path", Static).update(
+            self.tr("sandbox.ready", path=escape(str(path)))
+        )
+        self.query_one("#open-sandbox", Button).disabled = False
+
+    @on(Button.Pressed, "#open-sandbox")
+    def open_sandbox(self) -> None:
+        if self.sandbox_path is None:
+            self.notify(self.tr("sandbox.not_ready"), severity="warning")
+            return
+        try:
+            open_directory(self.sandbox_path)
+        except OSError as error:
+            self.notify(str(error), severity="error")
+            return
+        self.notify(self.tr("sandbox.opened"))
 
     @on(Button.Pressed, "#save-settings")
     def save_preferences(self) -> None:

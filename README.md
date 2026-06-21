@@ -48,7 +48,7 @@ optimizes for understanding:
 | History | Decorated, readable commit graph across branches and tags |
 | Branches | Local/remote visibility, tracking state, create, switch and guarded delete |
 | Diff & recovery | Unified diff viewer plus a chronological reflog timeline |
-| Learning | Beginner-to-expert lessons, quizzes, exercises and disposable sandboxes |
+| Learning | Lessons, exercises, disposable sandboxes and one-click folder access |
 | Safety | Risk classification, explicit confirmation and typed confirmation for critical actions |
 | Languages | Persistent automatic or manual selection across six interface languages |
 

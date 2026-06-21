@@ -44,6 +44,7 @@ learn.intermediate: Intermedio
 learn.advanced: Avanzato
 learn.expert: Esperto
 learn.create_sandbox: Crea sandbox
+learn.open_sandbox: Apri cartella
 settings.title: Lingua e preferenze
 settings.language: Lingua dell'interfaccia
 settings.save: Salva preferenze
@@ -122,6 +123,8 @@ confirm.critical_prompt: Digita "CONFERMO" per la seconda conferma.
 confirm.cancel: Annulla
 confirm.execute: Esegui
 sandbox.ready: "Sandbox pronta: [bold]{path}[/bold]"
+sandbox.not_ready: Crea prima una sandbox.
+sandbox.opened: Cartella della sandbox aperta.
 result.ok: OK
 result.error: ERRORE
 result.completed: Operazione completata.

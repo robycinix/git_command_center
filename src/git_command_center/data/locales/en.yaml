@@ -44,6 +44,7 @@ learn.intermediate: Intermediate
 learn.advanced: Advanced
 learn.expert: Expert
 learn.create_sandbox: Create sandbox
+learn.open_sandbox: Open folder
 settings.title: Language and preferences
 settings.language: Interface language
 settings.save: Save preferences
@@ -122,6 +123,8 @@ confirm.critical_prompt: Type "CONFERMO" for the second confirmation.
 confirm.cancel: Cancel
 confirm.execute: Execute
 sandbox.ready: "Sandbox ready: [bold]{path}[/bold]"
+sandbox.not_ready: Create a sandbox first.
+sandbox.opened: Sandbox folder opened.
 result.ok: OK
 result.error: ERROR
 result.completed: Operation completed.

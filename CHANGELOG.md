@@ -14,6 +14,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Localized wizard plans, safety prompts, dashboard labels and learning content
 - `--language` command-line override with English fallback for unsupported locales
 - Idempotent `--setup-path` command for Windows, Linux, macOS and WSL
+- One-click sandbox folder opening through the platform's native file manager
+- English README dashboard screenshot generated with an explicit locale
 
 ### Planned
 

@@ -4,7 +4,7 @@ import asyncio
 from pathlib import Path
 
 import pytest
-from textual.widgets import DataTable, Input, Select, Static
+from textual.widgets import Button, DataTable, Input, Select, Static
 
 from git_command_center.config.settings import AppSettings
 from git_command_center.git.service import GitService
@@ -19,6 +19,10 @@ def test_app_mounts_and_loads_catalog(repository: Path) -> None:
             await pilot.pause()
             assert app.query_one("#repo-strip", Static)
             assert app.query_one("#command-table", DataTable).row_count > 0
+            open_button = app.query_one("#open-sandbox", Button)
+            assert open_button.disabled
+            app._sandbox_ready(repository)
+            assert not open_button.disabled
 
     asyncio.run(run())
 

@@ -44,6 +44,7 @@ learn.intermediate: Intermédiaire
 learn.advanced: Avancé
 learn.expert: Expert
 learn.create_sandbox: Créer un bac à sable
+learn.open_sandbox: Ouvrir le dossier
 settings.title: Langue et préférences
 settings.language: Langue de l'interface
 settings.save: Enregistrer
@@ -122,6 +123,8 @@ confirm.critical_prompt: Saisissez "CONFERMO" comme seconde confirmation.
 confirm.cancel: Annuler
 confirm.execute: Exécuter
 sandbox.ready: "Bac à sable prêt : [bold]{path}[/bold]"
+sandbox.not_ready: Créez d'abord un bac à sable.
+sandbox.opened: Dossier du bac à sable ouvert.
 result.ok: OK
 result.error: ERREUR
 result.completed: Opération terminée.
