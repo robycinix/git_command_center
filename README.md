@@ -43,13 +43,13 @@ optimizes for understanding:
 
 | Area | What it provides |
 | --- | --- |
-| Dashboard | Repository path, remotes, branch, sync state, file counts and latest commit |
+| Dashboard | Collapsible repository context, sync state, file counts and latest commit |
 | Command explorer | Live search, category filters, risk filters and educational reference |
 | Guided wizard | Intent-based plans with exact commands and rollback guidance |
 | History | Decorated, readable commit graph across branches and tags |
 | Branches | Local/remote visibility, tracking state, create, switch and guarded delete |
 | Diff & recovery | Unified diff viewer plus a chronological reflog timeline |
-| Learning | Lessons, exercises, disposable sandboxes and one-click folder access |
+| Learning | Lessons plus disposable sandboxes with open and confirmed delete controls |
 | Safety | Risk classification, explicit confirmation and typed confirmation for critical actions |
 | Languages | Persistent automatic or manual selection across six interface languages |
 

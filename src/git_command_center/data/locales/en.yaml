@@ -45,6 +45,7 @@ learn.advanced: Advanced
 learn.expert: Expert
 learn.create_sandbox: Create sandbox
 learn.open_sandbox: Open folder
+learn.delete_sandbox: Delete sandbox
 settings.title: Language and preferences
 settings.language: Interface language
 settings.save: Save preferences
@@ -78,6 +79,7 @@ repo.remote: Remote
 repo.no_commit: No commits yet
 repo.author: Author
 repo.not_configured: not configured
+repo.toggle_details: Show or hide repository details
 dashboard.title: Repository status
 dashboard.path: Path
 dashboard.active_branch: Active branch
@@ -128,6 +130,10 @@ confirm.execute: Execute
 sandbox.ready: "Sandbox ready: [bold]{path}[/bold]"
 sandbox.not_ready: Create a sandbox first.
 sandbox.opened: Sandbox folder opened.
+sandbox.already_ready: Delete the current sandbox before creating another one.
+sandbox.delete_title: Delete sandbox
+sandbox.delete_prompt: "Permanently delete this disposable sandbox?\n\n{path}"
+sandbox.deleted: Sandbox deleted.
 result.ok: OK
 result.error: ERROR
 result.completed: Operation completed.

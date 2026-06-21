@@ -45,6 +45,7 @@ learn.advanced: Avancé
 learn.expert: Expert
 learn.create_sandbox: Créer un bac à sable
 learn.open_sandbox: Ouvrir le dossier
+learn.delete_sandbox: Supprimer le bac à sable
 settings.title: Langue et préférences
 settings.language: Langue de l'interface
 settings.save: Enregistrer
@@ -78,6 +79,7 @@ repo.remote: Remote
 repo.no_commit: Aucun commit
 repo.author: Auteur
 repo.not_configured: non configuré
+repo.toggle_details: Afficher ou masquer les détails du dépôt
 dashboard.title: État du dépôt
 dashboard.path: Chemin
 dashboard.active_branch: Branche active
@@ -128,6 +130,10 @@ confirm.execute: Exécuter
 sandbox.ready: "Bac à sable prêt : [bold]{path}[/bold]"
 sandbox.not_ready: Créez d'abord un bac à sable.
 sandbox.opened: Dossier du bac à sable ouvert.
+sandbox.already_ready: Supprimez le bac à sable actuel avant d'en créer un autre.
+sandbox.delete_title: Supprimer le bac à sable
+sandbox.delete_prompt: "Supprimer définitivement ce bac à sable temporaire ?\n\n{path}"
+sandbox.deleted: Bac à sable supprimé.
 result.ok: OK
 result.error: ERREUR
 result.completed: Opération terminée.

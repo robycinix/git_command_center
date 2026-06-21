@@ -11,6 +11,7 @@ from textual import on, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
+from textual.events import Click
 from textual.screen import ModalScreen
 from textual.widgets import (
     Button,
@@ -43,7 +44,7 @@ from git_command_center.services.path_setup import (
 )
 from git_command_center.services.planner import GOALS, branch_delete_plan, build_plan
 from git_command_center.services.platform import open_directory
-from git_command_center.services.simulation import SimulationService
+from git_command_center.services.simulation import SandboxDeletionError, SimulationService
 
 
 class ConfirmScreen(ModalScreen[tuple[bool, str]]):
@@ -83,6 +84,33 @@ class ConfirmScreen(ModalScreen[tuple[bool, str]]):
         self.dismiss((True, typed))
 
 
+class SandboxDeleteScreen(ModalScreen[bool]):
+    def __init__(self, path: Path, translator: Translator) -> None:
+        super().__init__()
+        self.path = path
+        self.tr = translator
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="sandbox-delete-dialog"):
+            yield Static(f"[bold]{escape(self.tr('sandbox.delete_title'))}[/bold]")
+            yield Static(self.tr("sandbox.delete_prompt", path=escape(str(self.path))))
+            with Horizontal(id="sandbox-delete-buttons"):
+                yield Button(self.tr("confirm.cancel"), id="cancel-sandbox-delete")
+                yield Button(
+                    self.tr("learn.delete_sandbox"),
+                    id="accept-sandbox-delete",
+                    variant="error",
+                )
+
+    @on(Button.Pressed, "#cancel-sandbox-delete")
+    def cancel(self) -> None:
+        self.dismiss(False)
+
+    @on(Button.Pressed, "#accept-sandbox-delete")
+    def accept(self) -> None:
+        self.dismiss(True)
+
+
 class GCCApp(App[None]):
     TITLE = "Git Command Center"
     SUB_TITLE = ""
@@ -106,11 +134,16 @@ class GCCApp(App[None]):
         self.sub_title = self.tr("app.subtitle")
         self.catalog = CommandCatalog(language=self.tr.language)
         self.current_plan: CommandPlan | None = None
+        self.simulation_service = SimulationService()
         self.sandbox_path: Path | None = None
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
-        yield Static(self.tr("loading.repository"), id="repo-strip")
+        with Horizontal(id="repo-context"):
+            toggle = Static("☰", id="toggle-repo-context")
+            toggle.tooltip = self.tr("repo.toggle_details")
+            yield toggle
+            yield Static(self.tr("loading.repository"), id="repo-strip")
         with TabbedContent(initial="dashboard"):
             with TabPane(self.tr("tab.dashboard"), id="dashboard"):
                 yield Markdown(id="dashboard-content")
@@ -202,6 +235,12 @@ class GCCApp(App[None]):
                         id="open-sandbox",
                         disabled=True,
                     )
+                    yield Button(
+                        self.tr("learn.delete_sandbox"),
+                        id="delete-sandbox",
+                        variant="error",
+                        disabled=True,
+                    )
                 yield Markdown(self.tr("lesson.beginner"), id="lesson-content")
                 yield Static("", id="sandbox-path")
             with TabPane(self.tr("tab.settings"), id="settings"):
@@ -285,6 +324,13 @@ class GCCApp(App[None]):
 
     def action_refresh_repository(self) -> None:
         self._load_repository_data()
+
+    @on(Click, "#toggle-repo-context")
+    def toggle_repository_context(self) -> None:
+        details = self.query_one("#repo-strip", Static)
+        context = self.query_one("#repo-context", Horizontal)
+        details.display = not details.display
+        context.set_class(not details.display, "collapsed")
 
     @work(thread=True, exclusive=True, group="repository-refresh")
     def _load_repository_data(self) -> None:
@@ -567,26 +613,36 @@ class GCCApp(App[None]):
 
     @on(Button.Pressed, "#create-sandbox")
     def create_sandbox(self) -> None:
+        if self.sandbox_path is not None:
+            self.notify(self.tr("sandbox.already_ready"), severity="warning")
+            return
+        self.query_one("#create-sandbox", Button).disabled = True
         self._create_sandbox_worker()
 
     @work(thread=True, exclusive=True, group="sandbox")
     def _create_sandbox_worker(self) -> None:
         try:
-            path = SimulationService().create()
+            path = self.simulation_service.create()
         except (OSError, subprocess.SubprocessError) as error:
-            self.call_from_thread(self.notify, str(error), severity="error")
+            self.call_from_thread(self._sandbox_create_failed, str(error))
             return
         self.call_from_thread(
             self._sandbox_ready,
             path,
         )
 
+    def _sandbox_create_failed(self, message: str) -> None:
+        self.query_one("#create-sandbox", Button).disabled = False
+        self.notify(message, severity="error")
+
     def _sandbox_ready(self, path: Path) -> None:
         self.sandbox_path = path
         self.query_one("#sandbox-path", Static).update(
             self.tr("sandbox.ready", path=escape(str(path)))
         )
+        self.query_one("#create-sandbox", Button).disabled = True
         self.query_one("#open-sandbox", Button).disabled = False
+        self.query_one("#delete-sandbox", Button).disabled = False
 
     @on(Button.Pressed, "#open-sandbox")
     def open_sandbox(self) -> None:
@@ -599,6 +655,48 @@ class GCCApp(App[None]):
             self.notify(str(error), severity="error")
             return
         self.notify(self.tr("sandbox.opened"))
+
+    @on(Button.Pressed, "#delete-sandbox")
+    def request_sandbox_deletion(self) -> None:
+        if self.sandbox_path is None:
+            self.notify(self.tr("sandbox.not_ready"), severity="warning")
+            return
+        self.push_screen(
+            SandboxDeleteScreen(self.sandbox_path, self.tr),
+            self._sandbox_deletion_decided,
+        )
+
+    def _sandbox_deletion_decided(self, accepted: bool | None) -> None:
+        if not accepted or self.sandbox_path is None:
+            return
+        path = self.sandbox_path
+        self.query_one("#open-sandbox", Button).disabled = True
+        self.query_one("#delete-sandbox", Button).disabled = True
+        self._delete_sandbox_worker(path)
+
+    @work(thread=True, exclusive=True, group="sandbox-delete")
+    def _delete_sandbox_worker(self, path: Path) -> None:
+        try:
+            self.simulation_service.delete(path)
+        except (OSError, SandboxDeletionError) as error:
+            self.call_from_thread(self._sandbox_delete_failed, str(error))
+            return
+        self.call_from_thread(self._sandbox_deleted, path)
+
+    def _sandbox_delete_failed(self, message: str) -> None:
+        has_sandbox = self.sandbox_path is not None
+        self.query_one("#open-sandbox", Button).disabled = not has_sandbox
+        self.query_one("#delete-sandbox", Button).disabled = not has_sandbox
+        self.notify(message, severity="error")
+
+    def _sandbox_deleted(self, path: Path) -> None:
+        if self.sandbox_path == path:
+            self.sandbox_path = None
+        self.query_one("#sandbox-path", Static).update(self.tr("sandbox.deleted"))
+        self.query_one("#create-sandbox", Button).disabled = False
+        self.query_one("#open-sandbox", Button).disabled = True
+        self.query_one("#delete-sandbox", Button).disabled = True
+        self.notify(self.tr("sandbox.deleted"))
 
     @on(Button.Pressed, "#save-settings")
     def save_preferences(self) -> None:

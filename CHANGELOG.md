@@ -10,6 +10,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - In-app user `PATH` setup with localized added/already-present feedback
+- Collapsible repository context bar controlled by a compact hamburger button
+- Confirmed sandbox deletion restricted to temporary directories owned by GCC
 
 ### Changed
 

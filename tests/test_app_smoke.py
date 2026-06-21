@@ -19,11 +19,27 @@ def test_app_mounts_and_loads_catalog(repository: Path) -> None:
         async with app.run_test(size=(160, 48)) as pilot:
             await pilot.pause()
             assert app.query_one("#repo-strip", Static)
+            context_toggle = app.query_one("#toggle-repo-context", Static)
+            assert context_toggle
             assert app.query_one("#command-table", DataTable).row_count > 0
             open_button = app.query_one("#open-sandbox", Button)
+            delete_button = app.query_one("#delete-sandbox", Button)
             assert open_button.disabled
+            assert delete_button.disabled
+
+            await pilot.click("#toggle-repo-context")
+            await pilot.pause()
+            assert not app.query_one("#repo-strip", Static).display
+            await pilot.click("#toggle-repo-context")
+            await pilot.pause()
+            assert app.query_one("#repo-strip", Static).display
+
             app._sandbox_ready(repository)
             assert not open_button.disabled
+            assert not delete_button.disabled
+            app._sandbox_deleted(repository)
+            assert open_button.disabled
+            assert delete_button.disabled
 
             goal_select = app.query_one("#goal-select", Select)
             assert goal_select.styles.width.value == 58

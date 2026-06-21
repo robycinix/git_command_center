@@ -45,6 +45,7 @@ learn.advanced: Erweitert
 learn.expert: Experte
 learn.create_sandbox: Sandbox erstellen
 learn.open_sandbox: Ordner öffnen
+learn.delete_sandbox: Sandbox löschen
 settings.title: Sprache und Einstellungen
 settings.language: Sprache der Oberfläche
 settings.save: Einstellungen speichern
@@ -78,6 +79,7 @@ repo.remote: Remote
 repo.no_commit: Noch keine Commits
 repo.author: Autor
 repo.not_configured: nicht konfiguriert
+repo.toggle_details: Repository-Details ein- oder ausblenden
 dashboard.title: Repository-Status
 dashboard.path: Pfad
 dashboard.active_branch: Aktiver Branch
@@ -128,6 +130,10 @@ confirm.execute: Ausführen
 sandbox.ready: "Sandbox bereit: [bold]{path}[/bold]"
 sandbox.not_ready: Erstelle zuerst eine Sandbox.
 sandbox.opened: Sandbox-Ordner geöffnet.
+sandbox.already_ready: Lösche die aktuelle Sandbox, bevor du eine neue erstellst.
+sandbox.delete_title: Sandbox löschen
+sandbox.delete_prompt: "Diese temporäre Sandbox dauerhaft löschen?\n\n{path}"
+sandbox.deleted: Sandbox gelöscht.
 result.ok: OK
 result.error: FEHLER
 result.completed: Vorgang abgeschlossen.

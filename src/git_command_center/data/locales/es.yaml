@@ -45,6 +45,7 @@ learn.advanced: Avanzado
 learn.expert: Experto
 learn.create_sandbox: Crear entorno seguro
 learn.open_sandbox: Abrir carpeta
+learn.delete_sandbox: Eliminar entorno
 settings.title: Idioma y preferencias
 settings.language: Idioma de la interfaz
 settings.save: Guardar preferencias
@@ -78,6 +79,7 @@ repo.remote: Remoto
 repo.no_commit: Aún no hay commits
 repo.author: Autor
 repo.not_configured: no configurado
+repo.toggle_details: Mostrar u ocultar los detalles del repositorio
 dashboard.title: Estado del repositorio
 dashboard.path: Ruta
 dashboard.active_branch: Rama activa
@@ -128,6 +130,10 @@ confirm.execute: Ejecutar
 sandbox.ready: "Entorno listo: [bold]{path}[/bold]"
 sandbox.not_ready: Crea primero un entorno seguro.
 sandbox.opened: Se abrió la carpeta del entorno.
+sandbox.already_ready: Elimina el entorno actual antes de crear otro.
+sandbox.delete_title: Eliminar entorno
+sandbox.delete_prompt: "¿Eliminar permanentemente este entorno temporal?\n\n{path}"
+sandbox.deleted: Entorno eliminado.
 result.ok: OK
 result.error: ERROR
 result.completed: Operación completada.

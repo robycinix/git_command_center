@@ -7,11 +7,40 @@ Header {
     color: $text;
 }
 
-#repo-strip {
+#repo-context {
     height: 3;
-    padding: 0 2;
     background: $panel;
     border-bottom: solid $primary;
+}
+
+#repo-context.collapsed {
+    height: 1;
+}
+
+#toggle-repo-context {
+    width: 5;
+    min-width: 5;
+    min-height: 1;
+    height: 3;
+    padding: 0 1;
+    background: $panel;
+    color: $text;
+    content-align: center middle;
+}
+
+#toggle-repo-context:hover {
+    background: $primary-background;
+}
+
+#repo-context.collapsed #toggle-repo-context {
+    height: 1;
+}
+
+#repo-strip {
+    width: 1fr;
+    height: 3;
+    padding: 0 1;
+    background: $panel;
 }
 
 TabbedContent {
@@ -129,6 +158,29 @@ ConfirmScreen {
 }
 
 #confirm-buttons Button {
+    margin-left: 1;
+}
+
+SandboxDeleteScreen {
+    align: center middle;
+    background: rgba(0, 0, 0, 0.65);
+}
+
+#sandbox-delete-dialog {
+    width: 76;
+    height: auto;
+    padding: 1 2;
+    background: $panel;
+    border: thick $error;
+}
+
+#sandbox-delete-buttons {
+    height: auto;
+    margin-top: 1;
+    align-horizontal: right;
+}
+
+#sandbox-delete-buttons Button {
     margin-left: 1;
 }
 
