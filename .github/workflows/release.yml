@@ -136,9 +136,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Download release assets
+      - name: Download Python distributions
         uses: actions/download-artifact@v4
         with:
+          name: python-distributions
+          path: release-assets
+
+      - name: Download native executables
+        uses: actions/download-artifact@v4
+        with:
+          pattern: binary-*
           path: release-assets
           merge-multiple: true
 
